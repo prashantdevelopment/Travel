@@ -1,0 +1,14 @@
+node_modules
+.next
+data/bookings.json
+
+# secrets
+.env*
+!.env.example
+
+# agent kit (private)
+CLAUDE.md
+AGENTS.md
+.claude/
+.agents/
+brag-output*/

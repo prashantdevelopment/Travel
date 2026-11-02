@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blueprint – Dhruv Fine Trip</title>
+<style>
+  :root { --bg:#f7f7f5; --card:#ffffff; --text:#1d1d1b; --muted:#6b6b66; --line:#e3e3de; --accent:#2f5bea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141414; --card:#1d1d1d; --text:#ededea; --muted:#a3a39d; --line:#2e2e2c; --accent:#7c9bff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:32px 16px 64px; }
+  header h1 { margin:0 0 4px; font-size:28px; }
+  header p { margin:0; color:var(--muted); }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 28px; }
+  nav a { color:var(--accent); text-decoration:none; border:1px solid var(--line); padding:4px 10px; border-radius:999px; font-size:14px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:20px; }
+  section h2 { margin:0 0 4px; font-size:19px; }
+  section p.hint { margin:0 0 14px; color:var(--muted); font-size:14px; }
+  .diagram { overflow-x:auto; }
+  pre.mermaid { margin:0; background:transparent; text-align:center; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .done { color:#1f9d55; font-weight:600; } .doing { color:#d97706; font-weight:600; } .todo { color:var(--muted); }
+  .logos { display:flex; flex-wrap:wrap; gap:24px; align-items:center; }
+  .logo-row { display:flex; align-items:center; gap:14px; padding:16px 20px; border-radius:12px; }
+  .logo-row.light { background:#F8F7F4; color:#0F2A44; }
+  .logo-row.dark { background:#0F2A44; color:#fff; }
+  .logo-row b { display:block; font-size:22px; letter-spacing:-.01em; }
+  .logo-row small { letter-spacing:.2em; font-size:11px; font-weight:600; color:#B98A00; }
+  .logo-row.dark small { color:#F5B700; }
+  .swatches { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; font-size:13px; }
+  .swatches span { display:flex; align-items:center; gap:6px; }
+  .swatches i { width:22px; height:22px; border-radius:6px; border:1px solid var(--line); display:inline-block; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Dhruv Fine Trip — Blueprint</h1>
+    <p>One-page taxi website + browser voice booking assistant · CTA: book (voice/type) → WhatsApp, Call · Next.js (JavaScript) + plain CSS · Last updated 2026-11-02</p>
+  </header>
+
+  <nav>
+    <a href="#logo">Logo</a><a href="#sitemap">Sitemap</a><a href="#interlinks">Section links</a><a href="#flows">User flows</a>
+    <a href="#components">Components</a><a href="#architecture">Architecture</a><a href="#data">Data</a><a href="#build">Build order</a>
+  </nav>
+
+  <section id="logo">
+    <h2>0. Logo</h2>
+    <p class="hint">Road badge: a badge wearing a taxi roof sign, with the road climbing into the hills. Picked by the user on 2026-11-02 (options: logo-options.html).</p>
+    <div class="logos">
+      <div class="logo-row light"><img src="../public/logo.svg" width="56" height="56" alt=""><div><b>Dhruv Fine Trip</b><small>TAXI &amp; TOURS</small></div></div>
+    </div>
+    <div class="swatches">
+      <span><i style="background:#0F2A44"></i>Navy #0F2A44</span>
+      <span><i style="background:#F5B700"></i>Taxi yellow #F5B700</span>
+      <span><i style="background:#F7F6F3"></i>Off-white #F7F6F3</span>
+      <span><i style="background:#1F2328"></i>Text #1F2328</span>
+    </div>
+  </section>
+
+  <section id="sitemap">
+    <h2>1. Sitemap</h2>
+    <p class="hint">One page with anchor sections, plus two API routes.</p>
+    <div class="diagram"><pre class="mermaid">
+flowchart TD
+    home["Home / (one page)"] --> fleet["#fleet"]
+    home --> services["#services"]
+    home --> book["#book – Voice booking assistant"]
+    home --> contact["#contact"]
+    home -.-> notfound["404 page"]
+    api_agent["POST /api/agent"]
+    api_book["POST /api/bookings"]
+    book -.-> api_agent
+    book -.-> api_book
+    </pre></div>
+  </section>
+
+  <section id="interlinks">
+    <h2>2. Section interlink map</h2>
+    <p class="hint">Sections inside the page (solid) and CTA links (dashed).</p>
+    <div class="diagram"><pre class="mermaid">
+flowchart LR
+    subgraph HOME["Home"]
+        h_header["Header"] --> h_hero["Hero"] --> h_fleet["Fleet"] --> h_svc["Services"] --> h_book["Voice booking"] --> h_contact["Contact"] --> h_footer["Footer"]
+    end
+    h_hero -.-> h_book
+    h_fleet -.-> h_book
+    h_svc -.-> h_book
+    h_header -.-> call(["tel: 7310224488"])
+    h_hero -.-> wa(["WhatsApp chat"])
+    h_book -.-> wa
+    h_contact -.-> call
+    h_contact -.-> map(["Google Maps"])
+    </pre></div>
+  </section>
+
+  <section id="flows">
+    <h2>3. User flows</h2>
+    <p class="hint">Booking by voice, by typing, or directly by call / WhatsApp.</p>
+    <div class="diagram"><pre class="mermaid">
+flowchart TD
+    start(["Visitor lands on Home"]) --> choose{"How to book?"}
+    choose -- "Voice" --> mic["Taps mic, allows microphone"]
+    choose -- "Type" --> typed["Types in the chat box"]
+    mic --> ask["Assistant asks: pickup, drop, date, car, name, phone"]
+    typed --> ask
+    ask --> summary["Assistant reads the summary back"]
+    summary -- "Yes" --> saved["POST /api/bookings: booking id created"]
+    summary -- "No" --> ask
+    saved --> wa(["Send on WhatsApp / Call buttons shown"])
+    choose -- "Call / WhatsApp" --> direct(["Phone dialer / WhatsApp opens"])
+    </pre></div>
+  </section>
+
+  <section id="components">
+    <h2>4. Shared components</h2>
+    <p class="hint">Built before any section, reused everywhere.</p>
+    <div class="diagram"><pre class="mermaid">
+flowchart TD
+    layout["RootLayout – metadata, JSON-LD"] --> header["Header"]
+    layout --> main["page.js – sections"]
+    layout --> footer["Footer"]
+    header --> logo["Logo (SVG)"]
+    main --> section["Section wrapper (CSS class)"]
+    section --> btn["Button / link styles"]
+    section --> card["Card"]
+    main --> agent["VoiceAgent (client)"]
+    </pre></div>
+  </section>
+
+  <section id="architecture">
+    <h2>5. Architecture</h2>
+    <p class="hint">Same diagram as docs/ARCHITECTURE.md §1. Audio stays in the browser; only text reaches the server.</p>
+    <div class="diagram"><pre class="mermaid">
+flowchart LR
+    browser["Browser – Next.js page + VoiceAgent"] -- "Web Speech API (on device)" --> speech["Mic to text / text to voice"]
+    browser -- "POST /api/agent (text only)" --> agent_api["Route: /api/agent"]
+    browser -- "POST /api/bookings" --> book_api["Route: /api/bookings"]
+    agent_api --> agent_lib["lib/agent.js – pure state machine"]
+    book_api --> book_lib["lib/bookings.js – validate + save"]
+    book_lib --> store[("data/bookings.json")]
+    browser -.-> wa(["WhatsApp / tel: links"])
+    later["Phase E: WhatsApp webhook, phone call"] -.-> agent_lib
+    </pre></div>
+  </section>
+
+  <section id="data">
+    <h2>6. Data model</h2>
+    <p class="hint">One entity. JSON file first; MongoDB if hosted on Vercel.</p>
+    <div class="diagram"><pre class="mermaid">
+erDiagram
+    BOOKING {
+        string id
+        string pickup
+        string drop
+        string date
+        string car
+        string name
+        string phone
+        string createdAt
+    }
+    </pre></div>
+  </section>
+
+  <section id="build">
+    <h2>7. Build order</h2>
+    <p class="hint">Keep in sync with docs/PROJECT_PLAN.md — status: done · in progress · todo.</p>
+    <table>
+      <thead><tr><th>#</th><th>Phase</th><th>Step</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>A</td><td>Setup (Next.js JS scaffold)</td><td class="done">done</td></tr>
+        <tr><td>2</td><td>A</td><td>Test harness (node --test, Playwright, regress.sh)</td><td class="done">done</td></tr>
+        <tr><td>3</td><td>A</td><td>Design foundation (tokens, light/dark)</td><td class="done">done</td></tr>
+        <tr><td>4</td><td>A</td><td>Logo (SVG + favicon)</td><td class="done">done</td></tr>
+        <tr><td>5</td><td>A</td><td>Layout shell (Header, Footer, business data, 404)</td><td class="todo">todo</td></tr>
+        <tr><td>6</td><td>A</td><td>Phase A regression</td><td class="todo">todo</td></tr>
+        <tr><td>7–10</td><td>B</td><td>Hero · Fleet · Services · Contact</td><td class="todo">todo</td></tr>
+        <tr><td>11</td><td>B</td><td>Phase B regression</td><td class="todo">todo</td></tr>
+        <tr><td>12–14</td><td>C</td><td>lib/agent.js + /api/agent + /api/bookings</td><td class="todo">todo</td></tr>
+        <tr><td>15–17</td><td>C</td><td>VoiceAgent UI · voice layer · Hindi toggle</td><td class="todo">todo</td></tr>
+        <tr><td>18</td><td>C</td><td>Phase C regression</td><td class="todo">todo</td></tr>
+        <tr><td>19–21</td><td>D</td><td>SEO · polish · launch audit</td><td class="todo">todo</td></tr>
+        <tr><td>22–25</td><td>E</td><td>WhatsApp webhook · phone call agent · owner alerts (paid, later)</td><td class="todo">todo</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default', securityLevel: 'strict' });
+</script>
+</body>
+</html>

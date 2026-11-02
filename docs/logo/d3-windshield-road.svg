@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">Dhruv Fine Trip – road in the windshield mark</title>
+  <rect x="100" y="28" width="56" height="22" rx="6" fill="#111"/>
+  <path fill="#111" fill-rule="evenodd" d="M68 116 L86 60 H170 L188 116 Z M92 108 L104 72 H152 L164 108 Z"/>
+  <path fill="#111" d="M110 108 L125 80 H131 L146 108 Z"/>
+  <path fill="#111" fill-rule="evenodd" d="M64 108 H192 A24 24 0 0 1 216 132 V180 A16 16 0 0 1 200 196 H56 A16 16 0 0 1 40 180 V132 A24 24 0 0 1 64 108 Z M80 136 A14 14 0 1 0 80.01 136 Z M176 136 A14 14 0 1 0 176.01 136 Z M108 164 H148 V176 H108 Z"/>
+  <rect x="56" y="190" width="36" height="30" rx="8" fill="#111"/>
+  <rect x="164" y="190" width="36" height="30" rx="8" fill="#111"/>
+</svg>

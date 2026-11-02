@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo concepts – Dhruv Fine Trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f7f6f3; --card:#fff; --text:#1f2328; --muted:#646360; --line:#e6e4df; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.55 Geist, system-ui, sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { margin:0; font:400 40px/1.1 'Instrument Serif', serif; letter-spacing:-.02em; }
+  header p { margin:4px 0 24px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+  @media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+  .concept { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .concept.rec { outline:2px solid #F5B700; }
+  .tag { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .rec .tag::after { content:'  ·  recommended'; color:#8a5d00; }
+  h2 { margin:2px 0 0; font-size:20px; }
+  .idea { margin:0; color:var(--muted); }
+  .big { display:grid; place-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .big img { width:160px; height:160px; }
+  .sizes { display:flex; align-items:end; gap:16px; font-size:12px; color:var(--muted); }
+  .sizes figure { margin:0; display:grid; justify-items:center; gap:4px; }
+  .lockup { display:flex; align-items:center; gap:12px; padding:16px; border-radius:10px; background:#f7f6f3; color:#0F2A44; border:1px solid var(--line); }
+  .lockup svg { width:52px; height:52px; flex:none; }
+  .lockup b { display:block; font:400 30px/1 'Instrument Serif', serif; letter-spacing:-.01em; }
+  .lockup small { display:block; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:.22em; color:#8a5d00; }
+  .apps { display:flex; align-items:center; gap:14px; font-size:12px; color:var(--muted); }
+  .tile { width:56px; height:56px; border-radius:14px; display:grid; place-items:center; }
+  .tile svg { width:40px; height:40px; }
+  .risk { font-size:12px; color:var(--muted); margin:0; }
+  footer { margin-top:24px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Logo concepts — Dhruv Fine Trip</h1>
+    <p>Icon-based marks, built with the logo-design skill: black first, true sizes, then colour on the light theme. Pick A, B or C.</p>
+  </header>
+
+  <div class="grid">
+    <!-- A -->
+    <section class="concept">
+      <div><span class="tag">A · Icon</span><h2>Hill road</h2></div>
+      <p class="idea">A road climbing through hairpin bends, the way to Himachal and the Chardham. The hills are felt, not drawn.</p>
+      <div class="big"><img src="logo/a-hill-road.svg" alt="Hill road mark, black"></div>
+      <div class="sizes">
+        <figure><img src="logo/a-hill-road.svg" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+        <figure><img src="logo/a-hill-road.svg" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+        <figure><img src="logo/a-hill-road.svg" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+      </div>
+      <div class="lockup">
+        <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="none" stroke="#0F2A44" stroke-width="30" stroke-linecap="round" d="M40 212 H180 A26 26 0 0 0 180 160 H76 A26 26 0 0 1 76 108 H180 A26 26 0 0 0 180 56 H104"/><path fill="none" stroke="#F5B700" stroke-width="4" stroke-dasharray="10 9" d="M40 212 H180 A26 26 0 0 0 180 160 H76 A26 26 0 0 1 76 108 H180 A26 26 0 0 0 180 56 H104"/></svg>
+        <div><b>Dhruv Fine Trip</b><small>TAXI &amp; TOURS</small></div>
+      </div>
+      <div class="apps">
+        <div class="tile" style="background:#F5B700"><svg viewBox="0 0 256 256" aria-hidden="true"><path fill="none" stroke="#0F2A44" stroke-width="34" stroke-linecap="round" d="M40 212 H180 A26 26 0 0 0 180 160 H76 A26 26 0 0 1 76 108 H180 A26 26 0 0 0 180 56 H104"/></svg></div>
+        <div class="tile" style="background:#0F2A44"><svg viewBox="0 0 256 256" aria-hidden="true"><path fill="none" stroke="#F5B700" stroke-width="34" stroke-linecap="round" d="M40 212 H180 A26 26 0 0 0 180 160 H76 A26 26 0 0 1 76 108 H180 A26 26 0 0 0 180 56 H104"/></svg></div>
+        app icon / favicon
+      </div>
+      <p class="risk">Risk: even with three hairpins it can read as a snake or the letter S, and at 16px the bends merge.</p>
+    </section>
+
+    <!-- B -->
+    <section class="concept">
+      <div><span class="tag">B · Icon</span><h2>Milestone</h2></div>
+      <p class="idea">The Indian highway km-stone with its yellow cap, and a road running into it: every trip, measured and marked.</p>
+      <div class="big"><img src="logo/b-milestone.svg" alt="Milestone mark, black"></div>
+      <div class="sizes">
+        <figure><img src="logo/b-milestone.svg" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+        <figure><img src="logo/b-milestone.svg" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+        <figure><img src="logo/b-milestone.svg" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+      </div>
+      <div class="lockup">
+        <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="#F5B700" d="M48 104 A80 80 0 0 1 208 104 Z"/><path fill="#0F2A44" fill-rule="evenodd" d="M48 116 H208 V232 H48 Z M98 232 L120 140 H136 L158 232 Z"/></svg>
+        <div><b>Dhruv Fine Trip</b><small>TAXI &amp; TOURS</small></div>
+      </div>
+      <div class="apps">
+        <div class="tile" style="background:#0F2A44"><svg viewBox="0 0 256 256" aria-hidden="true"><path fill="#F5B700" d="M48 104 A80 80 0 0 1 208 104 Z"/><path fill="#fff" fill-rule="evenodd" d="M48 116 H208 V232 H48 Z M98 232 L120 140 H136 L158 232 Z"/></svg></div>
+        <div class="tile" style="background:#fff;border:1px solid #e6e4df"><svg viewBox="0 0 256 256" aria-hidden="true"><path fill="#F5B700" d="M48 104 A80 80 0 0 1 208 104 Z"/><path fill="#0F2A44" fill-rule="evenodd" d="M48 116 H208 V232 H48 Z M98 232 L120 140 H136 L158 232 Z"/></svg></div>
+        app icon / favicon
+      </div>
+      <p class="risk">Risk: people outside India may not know the milestone, but this audience does.</p>
+    </section>
+
+    <!-- C -->
+    <section class="concept rec">
+      <div><span class="tag">C · Icon</span><h2>Taxi front</h2></div>
+      <p class="idea">A geometric taxi seen head-on with the yellow roof sign. The most direct option: it says "taxi" at a glance.</p>
+      <div class="big"><img src="logo/c-taxi-front.svg" alt="Taxi front mark, black"></div>
+      <div class="sizes">
+        <figure><img src="logo/c-taxi-front.svg" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+        <figure><img src="logo/c-taxi-front.svg" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+        <figure><img src="logo/c-taxi-front.svg" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+      </div>
+      <div class="lockup">
+        <svg viewBox="0 0 256 256" aria-hidden="true"><rect x="100" y="28" width="56" height="22" rx="6" fill="#F5B700"/><path fill="#0F2A44" fill-rule="evenodd" d="M68 116 L86 60 H170 L188 116 Z M92 108 L104 72 H152 L164 108 Z"/><path fill="#0F2A44" fill-rule="evenodd" d="M64 108 H192 A24 24 0 0 1 216 132 V180 A16 16 0 0 1 200 196 H56 A16 16 0 0 1 40 180 V132 A24 24 0 0 1 64 108 Z M80 136 A14 14 0 1 0 80.01 136 Z M176 136 A14 14 0 1 0 176.01 136 Z M108 164 H148 V176 H108 Z"/><rect x="56" y="190" width="36" height="30" rx="8" fill="#0F2A44"/><rect x="164" y="190" width="36" height="30" rx="8" fill="#0F2A44"/></svg>
+        <div><b>Dhruv Fine Trip</b><small>TAXI &amp; TOURS</small></div>
+      </div>
+      <div class="apps">
+        <div class="tile" style="background:#F5B700"><svg viewBox="0 0 256 256" aria-hidden="true"><rect x="100" y="28" width="56" height="22" rx="6" fill="#fff"/><path fill="#0F2A44" fill-rule="evenodd" d="M68 116 L86 60 H170 L188 116 Z M92 108 L104 72 H152 L164 108 Z"/><path fill="#0F2A44" fill-rule="evenodd" d="M64 108 H192 A24 24 0 0 1 216 132 V180 A16 16 0 0 1 200 196 H56 A16 16 0 0 1 40 180 V132 A24 24 0 0 1 64 108 Z M80 136 A14 14 0 1 0 80.01 136 Z M176 136 A14 14 0 1 0 176.01 136 Z M108 164 H148 V176 H108 Z"/><rect x="56" y="190" width="36" height="30" rx="8" fill="#0F2A44"/><rect x="164" y="190" width="36" height="30" rx="8" fill="#0F2A44"/></svg></div>
+        <div class="tile" style="background:#0F2A44"><svg viewBox="0 0 256 256" aria-hidden="true"><rect x="100" y="28" width="56" height="22" rx="6" fill="#F5B700"/><path fill="#fff" fill-rule="evenodd" d="M68 116 L86 60 H170 L188 116 Z M92 108 L104 72 H152 L164 108 Z"/><path fill="#fff" fill-rule="evenodd" d="M64 108 H192 A24 24 0 0 1 216 132 V180 A16 16 0 0 1 200 196 H56 A16 16 0 0 1 40 180 V132 A24 24 0 0 1 64 108 Z M80 136 A14 14 0 1 0 80.01 136 Z M176 136 A14 14 0 1 0 176.01 136 Z M108 164 H148 V176 H108 Z"/><rect x="56" y="190" width="36" height="30" rx="8" fill="#fff"/><rect x="164" y="190" width="36" height="30" rx="8" fill="#fff"/></svg></div>
+        app icon / favicon
+      </div>
+      <p class="risk">Risk: car icons are common among cab services. The roof sign, navy and yellow, and clean geometry are what set it apart.</p>
+    </section>
+  </div>
+
+  <footer>The name is live text for now (Instrument Serif, OFL licence). The chosen icon gets a final small-size cut and the full kit: favicon, app icon, header logo and OG image.</footer>
+</main>
+</body>
+</html>

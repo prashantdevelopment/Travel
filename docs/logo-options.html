@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo concepts – Dhruv Fine Trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f7f6f3; --card:#fff; --text:#1f2328; --muted:#646360; --line:#e6e4df; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.55 Geist, system-ui, sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { margin:0; font:400 40px/1.1 'Instrument Serif', serif; letter-spacing:-.02em; }
+  header p { margin:4px 0 24px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+  @media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+  .concept { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .concept.rec { outline:2px solid #F5B700; }
+  .tag { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .rec .tag::after { content:'  ·  recommended'; color:#8a5d00; }
+  h2 { margin:2px 0 0; font-size:20px; }
+  .idea, .risk { margin:0; color:var(--muted); }
+  .risk { font-size:12px; }
+  .big { display:grid; place-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .big img { width:160px; height:160px; }
+  .sizes { display:flex; align-items:end; gap:16px; font-size:12px; color:var(--muted); }
+  .sizes figure { margin:0; display:grid; justify-items:center; gap:4px; }
+  .lockup { display:flex; align-items:center; gap:12px; padding:16px; border-radius:10px; background:#f7f6f3; color:#0F2A44; border:1px solid var(--line); }
+  .lockup svg { width:56px; height:56px; flex:none; }
+  .lockup b { display:block; font:400 30px/1 'Instrument Serif', serif; letter-spacing:-.01em; }
+  .lockup small { display:block; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:.22em; color:#8a5d00; }
+  .apps { display:flex; align-items:center; gap:14px; font-size:12px; color:var(--muted); }
+  .tile { width:56px; height:56px; border-radius:14px; display:grid; place-items:center; }
+  .tile svg { width:42px; height:42px; }
+  footer { margin-top:24px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>A + C combined — Dhruv Fine Trip</h1>
+    <p>Hill road (the journey to the hills) fused with the taxi. Black first at true sizes, then colour on the light theme. Pick 1, 2 or 3.</p>
+  </header>
+  <div class="grid" id="grid"></div>
+  <footer>The name is live text for now (Instrument Serif, OFL licence). The chosen mark gets a final small-size cut and the full kit: favicon, app icon, header logo and OG image. Earlier A/B/C sheet: logo-options-icons.html</footer>
+</main>
+
+<script>
+  // Each mark is drawn once as a function of its colours: ink = main shape, accent = roof sign / road line, paper = cut-outs.
+  const taxi = (ink, accent) => `
+    <rect x="100" y="28" width="56" height="22" rx="6" fill="${accent}"/>
+    <path fill="${ink}" fill-rule="evenodd" d="M68 116 L86 60 H170 L188 116 Z M92 108 L104 72 H152 L164 108 Z"/>
+    <path fill="${ink}" fill-rule="evenodd" d="M64 108 H192 A24 24 0 0 1 216 132 V180 A16 16 0 0 1 200 196 H56 A16 16 0 0 1 40 180 V132 A24 24 0 0 1 64 108 Z M80 136 A14 14 0 1 0 80.01 136 Z M176 136 A14 14 0 1 0 176.01 136 Z M108 164 H148 V176 H108 Z"/>
+    <rect x="56" y="190" width="36" height="30" rx="8" fill="${ink}"/>
+    <rect x="164" y="190" width="36" height="30" rx="8" fill="${ink}"/>`;
+
+  const marks = {
+    badge: (ink, accent, paper) => `
+      <rect x="96" y="16" width="64" height="28" rx="8" fill="${accent}"/>
+      <rect x="32" y="52" width="192" height="188" rx="44" fill="${ink}"/>
+      <path fill="${paper}" d="M84 240 L118 140 Q124 120 146 112 L196 96 L200 108 L156 124 Q142 130 140 144 L172 240 Z"/>
+      <path fill="none" stroke="${accent}" stroke-width="5" stroke-dasharray="14 12" d="M128 236 L130 150"/>`,
+    bend: (ink, accent) => `
+      <path fill="none" stroke="${ink}" stroke-width="26" stroke-linecap="round" d="M36 222 H180 A26 26 0 0 0 180 170 H92"/>
+      <path fill="none" stroke="${accent}" stroke-width="4" stroke-dasharray="10 9" d="M36 222 H180 A26 26 0 0 0 180 170 H92"/>
+      <g transform="translate(64 20) scale(0.56)">${taxi(ink, accent)}</g>`,
+    windshield: (ink, accent) => `
+      ${taxi(ink, accent)}
+      <path fill="${accent}" d="M110 108 L125 80 H131 L146 108 Z"/>`,
+  };
+
+  const concepts = [
+    { key: 'badge', file: 'd1-road-badge', name: 'Road badge',
+      idea: 'A badge wearing a taxi roof sign, with the road ahead climbing and turning into the hills. The sign makes it a taxi, and the road says where it goes.',
+      risk: 'Risk: the badge and roof sign together can read as a jar or bottle.' },
+    { key: 'bend', file: 'd2-taxi-bend', name: 'Taxi on the bend', rec: true,
+      idea: 'The taxi coming toward you around a hairpin bend: a hill trip in one picture.',
+      risk: 'Plan: use the full mark in the header and on cards, and the taxi alone (C) as the favicon below 32px, which is the skill's small-size cut.' },
+    { key: 'windshield', file: 'd3-windshield-road', name: 'Road in the windshield',
+      idea: 'The taxi front, with the road ahead seen through its windshield. A taxi at a glance, with the journey as the detail you notice later.',
+      risk: 'Risk: the road is a small detail, so below 32px it is simply a taxi.' },
+  ];
+
+  const svg = (key, ink, accent, paper = '#fff') => `<svg viewBox="0 0 256 256" aria-hidden="true">${marks[key](ink, accent, paper)}</svg>`;
+  const NAVY = '#0F2A44', YELLOW = '#F5B700';
+
+  document.getElementById('grid').innerHTML = concepts.map((c, i) => `
+    <section class="concept${c.rec ? ' rec' : ''}">
+      <div><span class="tag">${i + 1} · A + C</span><h2>${c.name}</h2></div>
+      <p class="idea">${c.idea}</p>
+      <div class="big"><img src="logo/${c.file}.svg" alt="${c.name} mark, black"></div>
+      <div class="sizes">${[64, 32, 16].map((s) => `<figure><img src="logo/${c.file}.svg" width="${s}" height="${s}" alt=""><figcaption>${s}</figcaption></figure>`).join('')}</div>
+      <div class="lockup">${svg(c.key, NAVY, YELLOW, '#fff')}<div><b>Dhruv Fine Trip</b><small>TAXI &amp; TOURS</small></div></div>
+      <div class="apps">
+        <div class="tile" style="background:${YELLOW}">${svg(c.key, NAVY, '#fff', YELLOW)}</div>
+        <div class="tile" style="background:${NAVY}">${svg(c.key, '#fff', YELLOW, NAVY)}</div>
+        app icon / favicon
+      </div>
+      <p class="risk">${c.risk}</p>
+    </section>`).join('');
+</script>
+</body>
+</html>
