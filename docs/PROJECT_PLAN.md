@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase A · **Last updated:** 2026-11-02 · **Next step:** 5 – Layout shell
+**Status:** Phase A done · **Last updated:** 2026-11-02 · **Next step:** 7 – Hero
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -154,8 +154,8 @@ Storage in phase B: `data/bookings.json` on the server. It works on a VPS or loc
 | 2 | Test harness: `node --test` for `lib/`, Playwright (`playwright-core`) E2E, `tests/e2e/regress.sh` | done | 2026-11-02 | `tests/e2e/e2e-home.mjs` (7 checks, port 3100, Edge) + `regress.sh`. Suite correctly fails on the missing favicon (404), which step 4 fixes |
 | 3 | Design foundation: tokens in `app/globals.css`, light theme, focus styles | done | 2026-11-02 | `minimalist-ui` direction; fonts via next/font (now Inter only); tokens, buttons, card, skip link, reduced motion. Dark mode removed (light only). Build ok, phone has no horizontal scroll |
 | 4 | Logo: `public/logo.svg` + `app/icon.svg` + `Logo` component | done | 2026-11-02 | User picked **d1 Road badge** (A+C combination) after 3 rounds; roof sign redrawn as a trapezoid so it no longer reads as a jar lid. Built with the `logo-design` skill (kaankiziltug, MIT). Favicon `app/icon.svg`, `public/logo.svg`, `components/Logo.js` (inline mark + live-text name). E2E 9/9; mutation (favicon removed) caught, 2 fails |
-| 5 | Layout shell: Header (mobile menu), Footer, `lib/business.js` (single data source), 404 | todo | | |
-| 6 | Phase A regression | todo | | |
+| 5 | Layout shell: Header (mobile menu), Footer, `lib/business.js` (single data source), 404 | done | 2026-11-02 | Sticky header (logo, nav, Call button, phone Menu that closes on Escape and on link click), footer (address with map link, both numbers, WhatsApp), 404 page, sticky footer. Unit 6/6, E2E 22/22. Mutations caught: Escape handler, WhatsApp encoding. Fixed after screenshots: phone header wrapping, footer gap |
+| 6 | Phase A regression | done | 2026-11-02 | build ok · unit 6/6 · e2e-home 22/22 · 0 failing parts |
 
 ### Phase B — Website sections
 | # | Step | Status | Done on | Notes |

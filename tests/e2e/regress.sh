@@ -12,7 +12,7 @@ run() {
   local name=$1; shift
   echo; echo "== $name"
   out=$(cd "$ROOT" && "$@" 2>&1); code=$?
-  echo "$out" | grep -E "^# (tests|pass|fail)|FAIL|rror" | head -10
+  echo "$out" | grep -E "^(#|ℹ) (tests|pass|fail)|FAIL|rror" | head -10
   [ $code -eq 0 ] && echo "$name ok" || { echo "FAIL $name (exit $code)"; fails=$((fails+1)); }
 }
 

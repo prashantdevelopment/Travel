@@ -26,7 +26,8 @@ const errors = [];
 const newPage = async (viewport, colorScheme = 'light') => {
   const page = await (await browser.newContext({ viewport, colorScheme })).newPage();
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
-  page.on('console', (m) => m.type() === 'error' && errors.push('console: ' + m.text()));
+  // HTTP error statuses (the deliberate 404 visit, the favicon) are checked explicitly, not as console noise.
+  page.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed to load resource') && errors.push('console: ' + m.text()));
   return page;
 };
 
@@ -43,14 +44,45 @@ check('no horizontal scroll on phone', await phone.evaluate(() => document.docum
 
 const iconHref = await desktop.locator('link[rel=icon]').first().getAttribute('href', { timeout: 2000 }).catch(() => null);
 check('favicon (app/icon.svg) is linked and served', !!iconHref && (await desktop.request.get(APP + iconHref)).status() === 200);
-check('header logo shows the mark and the name', await desktop.locator('a.logo svg').isVisible() && (await desktop.locator('a.logo').innerText()).includes('Dhruv Fine Trip'));
+const header = desktop.locator('header.site-header');
+check('header logo shows the mark and the name', await header.locator('a.logo svg').isVisible() && (await header.locator('a.logo').innerText()).includes('Dhruv Fine Trip'));
 
-const missing = await desktop.request.get(`${APP}/no-such-page`);
+// Header: desktop nav + call button
+const navHrefs = await desktop.locator('nav[aria-label=Main] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+check('desktop nav links to the 4 sections', JSON.stringify(navHrefs) === JSON.stringify(['#fleet', '#services', '#book', '#contact']), JSON.stringify(navHrefs));
+check('Call now dials the first number', (await header.getByRole('link', { name: 'Call now' }).getAttribute('href')) === 'tel:+917310224488');
+check('header stays on top while scrolling', await desktop.evaluate(() => getComputedStyle(document.querySelector('.site-header')).position === 'sticky'));
+check('mobile menu button hidden on desktop', !(await desktop.getByRole('button', { name: 'Menu' }).isVisible()));
+
+// Phone: nav collapses into a menu that opens, closes on Escape and on link click
+check('desktop nav hidden on phone', !(await phone.locator('nav[aria-label=Main]').isVisible()));
+const menuButton = phone.locator('.mobile-menu button');
+check('menu button starts collapsed', (await menuButton.getAttribute('aria-expanded')) === 'false');
+await menuButton.click();
+check('menu opens with 4 links', (await menuButton.getAttribute('aria-expanded')) === 'true' && (await phone.locator('#mobile-nav a').count()) === 4);
+await phone.keyboard.press('Escape');
+check('Escape closes the menu', !(await phone.locator('#mobile-nav').isVisible()));
+await menuButton.click();
+await phone.locator('#mobile-nav a', { hasText: 'Contact' }).click();
+check('choosing a link closes the menu', !(await phone.locator('#mobile-nav').isVisible()) && phone.url().endsWith('#contact'));
+
+// Footer
+const footer = desktop.locator('footer.site-footer');
+check('footer shows the address', (await footer.innerText()).includes('Ravindra Enclave, Baltana, Zirakpur'));
+const footerTel = await footer.locator('a[href^="tel:"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+check('footer lists both phone numbers', JSON.stringify(footerTel) === JSON.stringify(['tel:+917310224488', 'tel:+919621110066']));
+check('footer WhatsApp opens the business chat', (await footer.getByRole('link', { name: 'Chat on WhatsApp' }).getAttribute('href')) === 'https://wa.me/917310224488');
+
+// 404
+const missing = await desktop.goto(`${APP}/no-such-page`);
 check('unknown page returns 404', missing.status() === 404);
+check('404 page explains and links home', await desktop.getByRole('heading', { name: 'Page not found' }).isVisible() && (await desktop.getByRole('link', { name: 'Go to home page' }).getAttribute('href')) === '/');
 
 if (SHOTS) {
+  await desktop.goto(APP);
   await desktop.screenshot({ path: `${SHOTS}/home-desktop.png`, fullPage: true });
-  await phone.screenshot({ path: `${SHOTS}/home-phone.png`, fullPage: true });
+  await menuButton.click();
+  await phone.screenshot({ path: `${SHOTS}/home-phone-menu.png` });
 }
 
 check('no page or console errors', errors.length === 0, JSON.stringify(errors.slice(0, 3)));
