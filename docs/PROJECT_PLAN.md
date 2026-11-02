@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 8 – Fleet section
+**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 11b – Hero with a large travel photo
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -161,9 +161,14 @@ Storage in phase B: `data/bookings.json` on the server. It works on a VPS or loc
 | # | Step | Status | Done on | Notes |
 |---|---|---|---|---|
 | 7 | Hero (Call / WhatsApp / Book CTAs) | done | 2026-11-02 | `components/Hero.js`: promise headline, routes line, Book / Call / WhatsApp (pre-filled message) CTAs, "Book by voice" card linking to #book. E2E 28/28 (6 hero checks, CTAs above the fold on phone). Mutation (Book link) caught |
-| 8 | Fleet section | todo | | |
-| 9 | Services & routes section | todo | | |
+| 7b | Mobile pass (user: most visitors are on phones) | done | 2026-11-02 | Sticky bottom action bar (Call, WhatsApp, Book), phone header shows logo and Menu, thumb-sized hero buttons, anchored sections land below the header. E2E grew to 42 |
+| 8 | Fleet section | done | 2026-11-02 | 5 cars from `lib/business.js` (unit test), drawn side-view icons for now, one column on phone. Mutation on scroll-margin caught after making the check deterministic |
+| 9 | Services & routes section | todo | | Merged into 11c (destinations gallery) |
 | 10 | Contact section (tel, WhatsApp, map link) | todo | | |
+| 11a | Real car photos in Fleet (licence-checked) | done | 2026-11-02 | 5 Wikimedia Commons photos (1 public domain, 2 CC BY, 2 CC BY-SA), served through next/image. Etios photo with another taxi firm's logo rejected. Credits on the `/credits` page linked from the footer, which meets the CC attribution terms. Nav links changed to `/#section` so they work from any page. E2E 48/48 |
+| 11b | Portfolio feel: hero with a large travel photo | todo | | User: site feels too small |
+| 11c | Destinations gallery: Chardham, Himachal, Delhi, Chandigarh tricity, with photos | todo | | Replaces a plain services list |
+| 11d | How booking works (3 steps) + Why ride with us (only facts from the business card, no fake reviews or numbers) | todo | | |
 | 11 | Phase B regression | todo | | |
 
 ### Phase C — Voice booking assistant

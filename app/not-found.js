@@ -1,4 +1,4 @@
-export const metadata = { title: 'Page not found – Dhruv Fine Trip' };
+export const metadata = { title: 'Page not found | Dhruv Fine Trip' };
 
 export default function NotFound() {
   return (

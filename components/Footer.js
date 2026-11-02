@@ -27,7 +27,10 @@ export default function Footer() {
         </address>
       </div>
       <div className="container footer-bottom muted">
-        © {new Date().getFullYear()} {business.name}
+        <span>
+          © {new Date().getFullYear()} {business.name}
+        </span>
+        <a href="/credits">Photo credits</a>
       </div>
     </footer>
   );

@@ -1,6 +1,4 @@
-import { business, formatPhone, telLink, whatsappLink } from '@/lib/business';
-
-const bookingMessage = `Hi ${business.name}, I want to book a taxi.`;
+import { business, bookingMessage, formatPhone, telLink, whatsappLink } from '@/lib/business';
 
 export default function Hero() {
   return (
@@ -10,7 +8,7 @@ export default function Hero() {
           <span className="eyebrow">Taxi &amp; Tours · Zirakpur</span>
           <h1 id="hero-title">Reliable taxi for every route, including the Chardham Yatra.</h1>
           <p className="hero-lead">
-            One-way and round trips from Zirakpur, Chandigarh and Mohali to Delhi, Himachal Pradesh and the Char Dham.
+            One way and round trips from Zirakpur, Chandigarh and Mohali to Delhi, Himachal Pradesh and the Char Dham.
             Daily pick and drop too.
           </p>
           <div className="hero-actions">
@@ -38,7 +36,7 @@ export default function Hero() {
             Tap the mic and say where you want to go. The assistant asks a few questions and sends your booking on
             WhatsApp. You can type too.
           </span>
-          <span className="hero-assistant-link">Talk to the booking assistant →</span>
+          <span className="hero-assistant-link">Talk to the booking assistant</span>
         </a>
       </div>
     </section>

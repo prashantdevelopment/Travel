@@ -57,14 +57,41 @@ check('favicon (app/icon.svg) is linked and served', !!iconHref && (await deskto
 const header = desktop.locator('header.site-header');
 check('header logo shows the mark and the name', await header.locator('a.logo svg').isVisible() && (await header.locator('a.logo').innerText()).includes('Dhruv Fine Trip'));
 
+// Fleet
+const fleetCards = desktop.locator('#fleet li.fleet-card');
+check('fleet shows the five vehicles', JSON.stringify(await fleetCards.locator('h3').allInnerTexts()) === JSON.stringify(['Toyota Innova Crysta', 'Maruti Ertiga', 'Toyota Etios', 'Swift Dzire', 'Tempo Traveller']));
+check('each car shows its seats', JSON.stringify(await fleetCards.locator('.seats').allInnerTexts()) === JSON.stringify(['7 + 1 seats', '6 + 1 seats', '4 + 1 seats', '4 + 1 seats', 'Group travel']));
+check('each car has a Book this car link to #book', (await fleetCards.getByRole('link', { name: 'Book this car' }).evaluateAll((as) => as.map((a) => a.getAttribute('href')))).every((h) => h === '#book') && (await fleetCards.getByRole('link', { name: 'Book this car' }).count()) === 5);
+const photos = fleetCards.locator('.fleet-photo img');
+check('each car has a photo with its name as alt text', JSON.stringify(await photos.evaluateAll((imgs) => imgs.map((i) => i.alt))) === JSON.stringify(['Toyota Innova Crysta', 'Maruti Ertiga', 'Toyota Etios', 'Swift Dzire', 'Tempo Traveller']));
+await desktop.locator('#fleet').scrollIntoViewIfNeeded();
+for (let i = 0; i < 5; i++) await photos.nth(i).scrollIntoViewIfNeeded();
+check('all car photos load (optimised by next/image)', await desktop.waitForFunction(() => [...document.querySelectorAll('.fleet-photo img')].every((i) => i.complete && i.naturalWidth > 0 && i.currentSrc.includes('/_next/image')), null, { timeout: 10000 }).then(() => true, () => false));
+check('nav Fleet link lands on the fleet section', (await desktop.locator('#fleet').count()) === 1);
+
 // Header: desktop nav + call button
 const navHrefs = await desktop.locator('nav[aria-label=Main] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-check('desktop nav links to the 4 sections', JSON.stringify(navHrefs) === JSON.stringify(['#fleet', '#services', '#book', '#contact']), JSON.stringify(navHrefs));
+check('desktop nav links to the 4 sections', JSON.stringify(navHrefs) === JSON.stringify(['/#fleet', '/#services', '/#book', '/#contact']), JSON.stringify(navHrefs));
 check('Call now dials the first number', (await header.getByRole('link', { name: 'Call now' }).getAttribute('href')) === 'tel:+917310224488');
 check('header stays on top while scrolling', await desktop.evaluate(() => getComputedStyle(document.querySelector('.site-header')).position === 'sticky'));
 check('mobile menu button hidden on desktop', !(await desktop.getByRole('button', { name: 'Menu' }).isVisible()));
 
 // Phone: nav collapses into a menu that opens, closes on Escape and on link click
+// Phone: sticky action bar replaces the header Call button
+const bar = phone.locator('nav[aria-label="Quick actions"]');
+const barHrefs = await bar.locator('a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+check('phone action bar: Call, WhatsApp, Book', JSON.stringify(barHrefs) === JSON.stringify(['tel:+917310224488', 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), '/#book']), JSON.stringify(barHrefs));
+check('action bar stays at the bottom of the screen', await bar.evaluate((el) => getComputedStyle(el).position === 'fixed' && Math.abs(el.getBoundingClientRect().bottom - window.innerHeight) < 2));
+check('action bar buttons are thumb-sized (>= 48px)', (await bar.locator('a').evaluateAll((as) => as.every((a) => a.getBoundingClientRect().height >= 48))));
+check('action bar labels fit inside their buttons', await bar.locator('a').evaluateAll((as) => as.every((a) => a.scrollWidth <= a.clientWidth)));
+check('header Call hidden on phone (bar has it)', !(await phone.locator('.header-call').isVisible()));
+await phone.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+check('action bar does not cover the footer at the bottom', await phone.evaluate(() => document.querySelector('.footer-bottom').getBoundingClientRect().bottom <= document.querySelector('.action-bar').getBoundingClientRect().top + 1));
+await phone.evaluate(() => window.scrollTo(0, 0));
+check('action bar hidden on desktop', !(await desktop.locator('nav[aria-label="Quick actions"]').isVisible()));
+check('anchored sections land below the sticky header', await phone.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#fleet')).scrollMarginTop) >= document.querySelector('.site-header').offsetHeight));
+check('fleet is one column on phone', await phone.locator('#fleet li.fleet-card').evaluateAll((li) => new Set(li.map((el) => Math.round(el.getBoundingClientRect().left))).size === 1));
+check('Book this car is thumb-sized on phone', await phone.locator('#fleet .btn').first().evaluate((el) => el.getBoundingClientRect().height >= 44 && el.getBoundingClientRect().width > 300));
 check('desktop nav hidden on phone', !(await phone.locator('nav[aria-label=Main]').isVisible()));
 const menuButton = phone.locator('.mobile-menu button');
 check('menu button starts collapsed', (await menuButton.getAttribute('aria-expanded')) === 'false');
@@ -83,6 +110,15 @@ const footerTel = await footer.locator('a[href^="tel:"]').evaluateAll((as) => as
 check('footer lists both phone numbers', JSON.stringify(footerTel) === JSON.stringify(['tel:+917310224488', 'tel:+919621110066']));
 check('footer WhatsApp opens the business chat', (await footer.getByRole('link', { name: 'Chat on WhatsApp' }).getAttribute('href')) === 'https://wa.me/917310224488');
 
+// Photo credits
+check('footer links to photo credits', (await footer.getByRole('link', { name: 'Photo credits' }).getAttribute('href')) === '/credits');
+const credits = await desktop.goto(APP + '/credits');
+check('credits page lists all five photos with a source link', credits.status() === 200 && (await desktop.locator('.credits li').count()) === 5 && (await desktop.locator('.credits li a[href^="https://commons.wikimedia.org/wiki/File:"]').count()) === 5);
+await desktop.locator('nav[aria-label=Main] a', { hasText: 'Fleet' }).click();
+check('nav works from another page (credits to home fleet)', await desktop.waitForURL(APP + '/#fleet').then(() => true, () => false));
+await desktop.goto(APP + '/credits');
+check('credits page names authors and licences', (await desktop.locator('.credits').innerText()).includes('Premnath Kudva, CC BY-SA 4.0'));
+
 // 404
 const missing = await desktop.goto(`${APP}/no-such-page`);
 check('unknown page returns 404', missing.status() === 404);
@@ -96,6 +132,9 @@ if (SHOTS) {
   await menuButton.click();
   await phone.goto(APP);
   await phone.screenshot({ path: `${SHOTS}/home-phone.png`, fullPage: true });
+  await phone.screenshot({ path: `${SHOTS}/home-phone-screen.png` });
+  await phone.goto(APP + '#fleet');
+  await phone.screenshot({ path: `${SHOTS}/fleet-phone-screen.png` });
 }
 
 check('no page or console errors', errors.length === 0, JSON.stringify(errors.slice(0, 3)));

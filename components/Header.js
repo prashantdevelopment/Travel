@@ -17,10 +17,8 @@ export default function Header() {
           </ul>
         </nav>
         <div className="header-actions">
-          <a className="btn btn-primary" href={telLink(business.phones[0])}>
-            <span>
-              Call<span className="hide-phone"> now</span>
-            </span>
+          <a className="btn btn-primary header-call" href={telLink(business.phones[0])}>
+            Call now
           </a>
           <MobileMenu links={navLinks} />
         </div>

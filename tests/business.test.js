@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { business, telLink, formatPhone, whatsappLink, mapLink } from '../lib/business.js';
+import { business, fleet, telLink, formatPhone, whatsappLink, mapLink } from '../lib/business.js';
 
 test('phone numbers are 10-digit Indian mobiles', () => {
   for (const phone of business.phones) assert.match(phone, /^[6-9]\d{9}$/);
@@ -24,4 +24,12 @@ test('whatsappLink encodes the message', () => {
 
 test('mapLink searches the full address', () => {
   assert.ok(mapLink.includes(encodeURIComponent('Zirakpur')));
+});
+
+test('fleet lists the five vehicles from the business card', () => {
+  assert.deepEqual(
+    fleet.map((car) => car.name),
+    ['Toyota Innova Crysta', 'Maruti Ertiga', 'Toyota Etios', 'Swift Dzire', 'Tempo Traveller'],
+  );
+  assert.equal(new Set(fleet.map((car) => car.id)).size, fleet.length);
 });

@@ -1,14 +1,15 @@
 import { Inter } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import MobileActionBar from '@/components/MobileActionBar';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata = {
-  title: 'Dhruv Fine Trip – Taxi Service in Zirakpur, Chandigarh & Mohali',
+  title: 'Dhruv Fine Trip | Taxi Service in Zirakpur, Chandigarh and Mohali',
   description:
-    'Reliable one-way and round-trip taxi from Zirakpur: Chandigarh–Delhi, Himachal Pradesh, Chardham Yatra and daily pick & drop. Innova Crysta, Ertiga, Etios, Dzire, Tempo Traveller.',
+    'Reliable one way and round trip taxi from Zirakpur to Delhi, Himachal Pradesh and the Chardham Yatra, plus daily pick and drop. Innova Crysta, Ertiga, Etios, Dzire and Tempo Traveller.',
 };
 
 export const viewport = {
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         <Header />
         {children}
         <Footer />
+        <MobileActionBar />
       </body>
     </html>
   );
