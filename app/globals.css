@@ -396,3 +396,79 @@ main {
   justify-items: start;
   gap: var(--space-4);
 }
+
+/* Hero */
+.hero {
+  padding-block: var(--space-12) var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding-block: var(--space-24);
+  }
+}
+
+.hero-inner {
+  display: grid;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .hero-inner {
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-16);
+  }
+}
+
+.hero-copy {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-6);
+}
+
+.hero-lead {
+  max-width: 56ch;
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hero-assistant {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-assistant:hover .hero-assistant-link {
+  text-decoration: underline;
+}
+
+.mic-badge {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--brand);
+}
+
+.hero-assistant-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hero-assistant-link {
+  color: var(--brand);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}

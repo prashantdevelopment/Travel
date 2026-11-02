@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase A done · **Last updated:** 2026-11-02 · **Next step:** 7 – Hero
+**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 8 – Fleet section
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -160,7 +160,7 @@ Storage in phase B: `data/bookings.json` on the server. It works on a VPS or loc
 ### Phase B — Website sections
 | # | Step | Status | Done on | Notes |
 |---|---|---|---|---|
-| 7 | Hero (Call / WhatsApp / Book CTAs) | todo | | |
+| 7 | Hero (Call / WhatsApp / Book CTAs) | done | 2026-11-02 | `components/Hero.js`: promise headline, routes line, Book / Call / WhatsApp (pre-filled message) CTAs, "Book by voice" card linking to #book. E2E 28/28 (6 hero checks, CTAs above the fold on phone). Mutation (Book link) caught |
 | 8 | Fleet section | todo | | |
 | 9 | Services & routes section | todo | | |
 | 10 | Contact section (tel, WhatsApp, map link) | todo | | |

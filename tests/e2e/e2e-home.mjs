@@ -36,10 +36,20 @@ const res = await desktop.goto(APP);
 check('home responds 200', res.status() === 200);
 check('security headers set', res.headers()['x-content-type-options'] === 'nosniff');
 check('html lang is set', (await desktop.getAttribute('html', 'lang')) === 'en');
-check('one h1 with the business name', (await desktop.locator('h1').count()) === 1 && /Dhruv Fine Trip/.test(await desktop.locator('h1').innerText()));
+check('one h1, the hero promise', (await desktop.locator('h1').count()) === 1 && /Reliable taxi for every route/.test(await desktop.locator('h1').innerText()));
+
+// Hero CTAs
+const hero = desktop.locator('section.hero');
+check('Book a ride goes to the booking section', (await hero.getByRole('link', { name: 'Book a ride' }).getAttribute('href')) === '#book');
+check('hero Call shows and dials the number', (await hero.getByRole('link', { name: 'Call 73102 24488' }).getAttribute('href')) === 'tel:+917310224488');
+const heroWa = await hero.getByRole('link', { name: 'WhatsApp', exact: true }).getAttribute('href');
+check('hero WhatsApp opens the chat with a booking message', heroWa === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), heroWa);
+check('voice card points to the booking assistant', (await hero.locator('a.hero-assistant').getAttribute('href')) === '#book' && (await hero.locator('a.hero-assistant').innerText()).includes('Book by voice'));
+check('hero mentions the Chardham Yatra', (await hero.innerText()).includes('Chardham Yatra'));
 
 const phone = await newPage({ width: 390, height: 844 });
 await phone.goto(APP);
+check('hero CTAs visible on phone without scrolling', await phone.getByRole('link', { name: 'Book a ride' }).evaluate((el) => el.getBoundingClientRect().bottom <= window.innerHeight));
 check('no horizontal scroll on phone', await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
 
 const iconHref = await desktop.locator('link[rel=icon]').first().getAttribute('href', { timeout: 2000 }).catch(() => null);
@@ -83,6 +93,9 @@ if (SHOTS) {
   await desktop.screenshot({ path: `${SHOTS}/home-desktop.png`, fullPage: true });
   await menuButton.click();
   await phone.screenshot({ path: `${SHOTS}/home-phone-menu.png` });
+  await menuButton.click();
+  await phone.goto(APP);
+  await phone.screenshot({ path: `${SHOTS}/home-phone.png`, fullPage: true });
 }
 
 check('no page or console errors', errors.length === 0, JSON.stringify(errors.slice(0, 3)));
