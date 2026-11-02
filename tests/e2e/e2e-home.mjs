@@ -45,11 +45,22 @@ check('hero Call shows and dials the number', (await hero.getByRole('link', { na
 const heroWa = await hero.getByRole('link', { name: 'WhatsApp', exact: true }).getAttribute('href');
 check('hero WhatsApp opens the chat with a booking message', heroWa === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), heroWa);
 check('voice card points to the booking assistant', (await hero.locator('a.hero-assistant').getAttribute('href')) === '#book' && (await hero.locator('a.hero-assistant').innerText()).includes('Book by voice'));
+const heroImg = hero.locator('.hero-media img');
+check('hero photo loads first (priority, not lazy)', (await heroImg.getAttribute('loading')) !== 'lazy' && (await heroImg.getAttribute('fetchpriority')) === 'high' && (await heroImg.evaluate((i) => i.complete && i.naturalWidth > 0)));
+check('hero photo has descriptive alt text', (await heroImg.getAttribute('alt')).includes('Lahaul, Himachal Pradesh'));
+// Contrast: white text needs a dark scrim; its lightest stop must stay at alpha >= 0.45.
+const scrimAlpha = (el) => {
+  const scrim = getComputedStyle(el.querySelector('.hero-media'), '::after');
+  const alphas = [...`${scrim.backgroundColor} ${scrim.backgroundImage}`.matchAll(/rgba\([^)]*,\s*([0-9.]+)\)/g)].map((m) => Number(m[1])).filter((a) => a > 0);
+  return alphas.length ? Math.min(...alphas) : 0;
+};
+check('hero text is white over a dark scrim (desktop)', await hero.evaluate((el, fn) => getComputedStyle(el.querySelector('h1')).color === 'rgb(255, 255, 255)' && new Function(`return ${fn}`)()(el) >= 0.45, scrimAlpha.toString()));
 check('hero mentions the Chardham Yatra', (await hero.innerText()).includes('Chardham Yatra'));
 
 const phone = await newPage({ width: 390, height: 844 });
 await phone.goto(APP);
 check('hero CTAs visible on phone without scrolling', await phone.getByRole('link', { name: 'Book a ride' }).evaluate((el) => el.getBoundingClientRect().bottom <= window.innerHeight));
+check('hero text is white over a dark scrim (phone)', await phone.locator('section.hero').evaluate((el, fn) => getComputedStyle(el.querySelector('h1')).color === 'rgb(255, 255, 255)' && new Function(`return ${fn}`)()(el) >= 0.45, scrimAlpha.toString()));
 check('no horizontal scroll on phone', await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
 
 const iconHref = await desktop.locator('link[rel=icon]').first().getAttribute('href', { timeout: 2000 }).catch(() => null);
@@ -113,7 +124,7 @@ check('footer WhatsApp opens the business chat', (await footer.getByRole('link',
 // Photo credits
 check('footer links to photo credits', (await footer.getByRole('link', { name: 'Photo credits' }).getAttribute('href')) === '/credits');
 const credits = await desktop.goto(APP + '/credits');
-check('credits page lists all five photos with a source link', credits.status() === 200 && (await desktop.locator('.credits li').count()) === 5 && (await desktop.locator('.credits li a[href^="https://commons.wikimedia.org/wiki/File:"]').count()) === 5);
+check('credits page lists all six photos with a source link', credits.status() === 200 && (await desktop.locator('.credits li').count()) === 6 && (await desktop.locator('.credits li a[href^="https://commons.wikimedia.org/wiki/File:"]').count()) === 6);
 await desktop.locator('nav[aria-label=Main] a', { hasText: 'Fleet' }).click();
 check('nav works from another page (credits to home fleet)', await desktop.waitForURL(APP + '/#fleet').then(() => true, () => false));
 await desktop.goto(APP + '/credits');

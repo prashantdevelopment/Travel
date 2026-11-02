@@ -1,8 +1,12 @@
-import { business, bookingMessage, formatPhone, telLink, whatsappLink } from '@/lib/business';
+import Image from 'next/image';
+import { business, bookingMessage, formatPhone, heroPhoto, telLink, whatsappLink } from '@/lib/business';
 
 export default function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
+      <div className="hero-media">
+        <Image src="/images/hero.jpg" alt={heroPhoto.alt} fill loading="eager" fetchPriority="high" sizes="100vw" />
+      </div>
       <div className="container hero-inner">
         <div className="hero-copy">
           <span className="eyebrow">Taxi &amp; Tours · Zirakpur</span>
@@ -12,13 +16,13 @@ export default function Hero() {
             Daily pick and drop too.
           </p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#book">
+            <a className="btn btn-accent" href="#book">
               Book a ride
             </a>
-            <a className="btn btn-outline" href={telLink(business.phones[0])}>
+            <a className="btn btn-light" href={telLink(business.phones[0])}>
               Call {formatPhone(business.phones[0])}
             </a>
-            <a className="btn btn-outline" href={whatsappLink(bookingMessage)} target="_blank" rel="noopener noreferrer">
+            <a className="btn btn-light" href={whatsappLink(bookingMessage)} target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>
           </div>

@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 11b – Hero with a large travel photo
+**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 11c – Destinations gallery
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -166,7 +166,7 @@ Storage in phase B: `data/bookings.json` on the server. It works on a VPS or loc
 | 9 | Services & routes section | todo | | Merged into 11c (destinations gallery) |
 | 10 | Contact section (tel, WhatsApp, map link) | todo | | |
 | 11a | Real car photos in Fleet (licence-checked) | done | 2026-11-02 | 5 Wikimedia Commons photos (1 public domain, 2 CC BY, 2 CC BY-SA), served through next/image. Etios photo with another taxi firm's logo rejected. Credits on the `/credits` page linked from the footer, which meets the CC attribution terms. Nav links changed to `/#section` so they work from any page. E2E 48/48 |
-| 11b | Portfolio feel: hero with a large travel photo | todo | | User: site feels too small |
+| 11b | Portfolio feel: hero with a large travel photo | done | 2026-11-02 | Full-bleed Lahaul hairpin road photo (Wikimedia, CC BY 4.0, resized to 2400px with sharp, credited on /credits). Dark scrim keeps white text readable; full screen height on desktop; yellow Book button, white outline Call and WhatsApp. Eager load with high fetch priority for LCP. E2E 52/52. Mutation (light scrim on phone) caught |
 | 11c | Destinations gallery: Chardham, Himachal, Delhi, Chandigarh tricity, with photos | todo | | Replaces a plain services list |
 | 11d | How booking works (3 steps) + Why ride with us (only facts from the business card, no fake reviews or numbers) | todo | | |
 | 11 | Phase B regression | todo | | |
