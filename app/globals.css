@@ -706,3 +706,197 @@ section[id] {
   gap: var(--space-3);
   padding-left: var(--space-6);
 }
+
+/* Destinations: tall photo cards with text on a dark scrim */
+.destination-grid {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .destination-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* Phone: photo on top, text on a solid navy panel (readable, shorter cards) */
+.destination-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: #0f2a44;
+  color: #fff;
+  text-decoration: none;
+}
+
+.destination-photo {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.destination-photo img {
+  object-fit: cover;
+  transition: transform 600ms var(--ease);
+}
+
+.destination-card:hover .destination-photo img {
+  transform: scale(1.04);
+}
+
+/* Tablet and up: text over the photo on a dark scrim */
+@media (min-width: 640px) {
+  .destination-card {
+    position: relative;
+    isolation: isolate;
+    justify-content: flex-end;
+    aspect-ratio: 4 / 5;
+  }
+
+  .destination-photo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    aspect-ratio: auto;
+  }
+
+  .destination-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(10, 24, 38, 0) 15%, rgba(10, 24, 38, 0.6) 45%, rgba(10, 24, 38, 0.92) 100%);
+  }
+}
+
+@media (min-width: 1024px) {
+  .destination-card {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.destination-text {
+  display: grid;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  gap: var(--space-2);
+  padding: var(--space-6);
+}
+
+.destination-places {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.destination-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.destination-desc {
+  font-size: 0.9375rem;
+  opacity: 0.9;
+}
+
+.destination-cta {
+  justify-self: start;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #0f2a44;
+  font-weight: 600;
+}
+
+.section-surface {
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+/* How booking works */
+.steps {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-2);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #0f2a44;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.step h3,
+.reason h3 {
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+/* Why ride with us */
+.reasons {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .reasons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .reasons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.reason {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  background: var(--bg);
+}
+
+.reason-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: #0f2a44;
+  color: var(--accent);
+}

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { business, fleet, telLink, formatPhone, whatsappLink, mapLink } from '../lib/business.js';
+import { bookingSteps, business, destinations, fleet, photoCredits, reasons, telLink, formatPhone, whatsappLink, mapLink } from '../lib/business.js';
 
 test('phone numbers are 10-digit Indian mobiles', () => {
   for (const phone of business.phones) assert.match(phone, /^[6-9]\d{9}$/);
@@ -32,4 +32,23 @@ test('fleet lists the five vehicles from the business card', () => {
     ['Toyota Innova Crysta', 'Maruti Ertiga', 'Toyota Etios', 'Swift Dzire', 'Tempo Traveller'],
   );
   assert.equal(new Set(fleet.map((car) => car.id)).size, fleet.length);
+});
+
+test('every photo credit has an author, a licence and a Commons source', () => {
+  const credits = photoCredits();
+  assert.equal(credits.length, 1 + destinations.length + fleet.length);
+  for (const photo of credits) {
+    assert.ok(photo.label && photo.author && photo.license, photo.label);
+    assert.match(photo.source, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/);
+  }
+});
+
+test('destination copy has no dashes or hyphens', () => {
+  for (const d of destinations) assert.doesNotMatch(`${d.name} ${d.places} ${d.text}`, /[-–—]/, d.id);
+});
+
+test('booking steps and reasons read cleanly (no dashes, no hyphens)', () => {
+  assert.equal(bookingSteps.length, 3);
+  assert.equal(reasons.length, 4);
+  for (const item of [...bookingSteps, ...reasons]) assert.doesNotMatch(`${item.title} ${item.text}`, /[-–—]/, item.title);
 });

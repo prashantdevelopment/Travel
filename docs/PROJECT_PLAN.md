@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 11c – Destinations gallery
+**Status:** Phase B · **Last updated:** 2026-11-02 · **Next step:** 10 – Contact section, then 11 – Phase B regression
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -167,8 +167,8 @@ Storage in phase B: `data/bookings.json` on the server. It works on a VPS or loc
 | 10 | Contact section (tel, WhatsApp, map link) | todo | | |
 | 11a | Real car photos in Fleet (licence-checked) | done | 2026-11-02 | 5 Wikimedia Commons photos (1 public domain, 2 CC BY, 2 CC BY-SA), served through next/image. Etios photo with another taxi firm's logo rejected. Credits on the `/credits` page linked from the footer, which meets the CC attribution terms. Nav links changed to `/#section` so they work from any page. E2E 48/48 |
 | 11b | Portfolio feel: hero with a large travel photo | done | 2026-11-02 | Full-bleed Lahaul hairpin road photo (Wikimedia, CC BY 4.0, resized to 2400px with sharp, credited on /credits). Dark scrim keeps white text readable; full screen height on desktop; yellow Book button, white outline Call and WhatsApp. Eager load with high fetch priority for LCP. E2E 52/52. Mutation (light scrim on phone) caught |
-| 11c | Destinations gallery: Chardham, Himachal, Delhi, Chandigarh tricity, with photos | todo | | Replaces a plain services list |
-| 11d | How booking works (3 steps) + Why ride with us (only facts from the business card, no fake reviews or numbers) | todo | | |
+| 11c | Destinations gallery: Chardham, Himachal, Delhi, Chandigarh tricity, with photos | done | 2026-11-02 | 4 licence-checked Commons photos (1 CC0, 3 CC BY), resized with sharp. Phone: photo on top and text on a navy panel (short cards). Tablet and up: text over the photo on a scrim; desktop 2 large 4:3 columns (4 narrow ones crowded the text). `photoCredits()` feeds /credits (10 photos). Unit 9/9 (incl. no dashes in copy), E2E 60/60. Found and stopped an orphaned test server on 3102; suites now refuse to run on a busy port. No mutation for the layout change |
+| 11d | How booking works (3 steps) + Why ride with us (only facts from the business card, no fake reviews or numbers) | done | 2026-11-02 | `components/HowItWorks.js` (numbered ol), `components/WhyUs.js` (4 reasons with own line icons), copy in `lib/business.js` with a no-dash unit test. Unit 10/10, E2E 67/67 incl. a tablet (820px) pass that caught a misplaced CSS rule |
 | 11 | Phase B regression | todo | | |
 
 ### Phase C — Voice booking assistant

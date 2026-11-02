@@ -15,6 +15,8 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const waitFor = async (url) => { for (let i = 0; i < 60; i++) { try { await fetch(url); return; } catch { await wait(500); } } throw new Error('not up: ' + url); };
 const killTree = (p) => { try { process.platform === 'win32' ? execSync(`taskkill /pid ${p.pid} /T /F`, { stdio: 'ignore' }) : process.kill(-p.pid); } catch {} };
 
+// A stale server on the test port would make us test an old build.
+if (await fetch(APP).then(() => true, () => false)) throw new Error(`port ${PORT} is already in use; stop that server first`);
 const server = spawn(`npx next start -p ${PORT}`, { cwd: ROOT, shell: true, env: { ...process.env, ADMIN_TOKEN: '' }, detached: process.platform !== 'win32' });
 const stop = () => killTree(server);
 const crash = (e) => { console.log('Error:', String(e?.message ?? e).split(/\r?\n/)[0]); stop(); process.exit(1); };
@@ -68,6 +70,15 @@ check('favicon (app/icon.svg) is linked and served', !!iconHref && (await deskto
 const header = desktop.locator('header.site-header');
 check('header logo shows the mark and the name', await header.locator('a.logo svg').isVisible() && (await header.locator('a.logo').innerText()).includes('Dhruv Fine Trip'));
 
+// Destinations (nav Services lands here)
+const destCards = desktop.locator('#services a.destination-card');
+check('destinations show the four trip types', JSON.stringify(await destCards.locator('.destination-name').allInnerTexts()) === JSON.stringify(['Chardham Yatra', 'Himachal Pradesh', 'Delhi', 'Chandigarh tricity']));
+check('each destination card books that trip', (await destCards.evaluateAll((as) => as.map((a) => a.getAttribute('href')))).every((h) => h === '#book') && (await destCards.locator('.destination-cta').count()) === 4);
+for (let i = 0; i < 4; i++) await destCards.nth(i).scrollIntoViewIfNeeded();
+check('destination photos load with alt text', await desktop.waitForFunction(() => [...document.querySelectorAll('.destination-card img')].every((i) => i.complete && i.naturalWidth > 0 && i.alt.length > 10), null, { timeout: 10000 }).then(() => true, () => false));
+check('destination text sits on a dark scrim (desktop)', await destCards.first().evaluate((a) => getComputedStyle(a, '::after').backgroundImage.includes('0.92)') && getComputedStyle(a).color === 'rgb(255, 255, 255)'));
+check('destinations: two large columns on desktop', await destCards.evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().top))).size === 2 && as[0].getBoundingClientRect().width > 480));
+
 // Fleet
 const fleetCards = desktop.locator('#fleet li.fleet-card');
 check('fleet shows the five vehicles', JSON.stringify(await fleetCards.locator('h3').allInnerTexts()) === JSON.stringify(['Toyota Innova Crysta', 'Maruti Ertiga', 'Toyota Etios', 'Swift Dzire', 'Tempo Traveller']));
@@ -79,6 +90,12 @@ await desktop.locator('#fleet').scrollIntoViewIfNeeded();
 for (let i = 0; i < 5; i++) await photos.nth(i).scrollIntoViewIfNeeded();
 check('all car photos load (optimised by next/image)', await desktop.waitForFunction(() => [...document.querySelectorAll('.fleet-photo img')].every((i) => i.complete && i.naturalWidth > 0 && i.currentSrc.includes('/_next/image')), null, { timeout: 10000 }).then(() => true, () => false));
 check('nav Fleet link lands on the fleet section', (await desktop.locator('#fleet').count()) === 1);
+
+// How booking works + Why ride with us
+check('how booking works shows 3 numbered steps in order', JSON.stringify(await desktop.locator('#how .step h3').allInnerTexts()) === JSON.stringify(['Tell us your trip', 'We confirm car and fare', 'Your car comes to you']) && (await desktop.locator('#how ol.steps').count()) === 1);
+check('why ride with us lists 4 reasons with icons', (await desktop.locator('#why .reason').count()) === 4 && (await desktop.locator('#why .reason svg').count()) === 4);
+check('why mentions the local office address', (await desktop.locator('#why').innerText()).includes('Baltana, Zirakpur'));
+check('sections appear in order: hero, destinations, fleet, how, why', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'services', 'fleet', 'how', 'why']));
 
 // Header: desktop nav + call button
 const navHrefs = await desktop.locator('nav[aria-label=Main] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
@@ -101,6 +118,14 @@ check('action bar does not cover the footer at the bottom', await phone.evaluate
 await phone.evaluate(() => window.scrollTo(0, 0));
 check('action bar hidden on desktop', !(await desktop.locator('nav[aria-label="Quick actions"]').isVisible()));
 check('anchored sections land below the sticky header', await phone.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#fleet')).scrollMarginTop) >= document.querySelector('.site-header').offsetHeight));
+check('destination text on a solid navy panel below the photo (phone)', await phone.locator('a.destination-card').first().evaluate((a) => getComputedStyle(a).backgroundColor === 'rgb(15, 42, 68)' && a.querySelector('.destination-text').getBoundingClientRect().top >= a.querySelector('.destination-photo').getBoundingClientRect().bottom - 1));
+check('destination cards stay short on phone (< 75% of the screen)', await phone.locator('a.destination-card').evaluateAll((as) => as.every((a) => a.getBoundingClientRect().height < window.innerHeight * 0.75)));
+check('steps and reasons stack in one column on phone', await phone.evaluate(() => ['#how .step', '#why .reason'].every((sel) => new Set([...document.querySelectorAll(sel)].map((el) => Math.round(el.getBoundingClientRect().left))).size === 1)));
+const tablet = await newPage({ width: 820, height: 1180 });
+await tablet.goto(APP);
+check('tablet: destination text sits over the photo on a scrim', await tablet.locator('a.destination-card').first().evaluate((a) => getComputedStyle(a.querySelector('.destination-photo')).position === 'absolute' && getComputedStyle(a, '::after').backgroundImage.includes('0.92)')));
+check('tablet: no horizontal scroll', await tablet.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+check('destinations: one column on phone', await phone.locator('a.destination-card').evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().left))).size === 1));
 check('fleet is one column on phone', await phone.locator('#fleet li.fleet-card').evaluateAll((li) => new Set(li.map((el) => Math.round(el.getBoundingClientRect().left))).size === 1));
 check('Book this car is thumb-sized on phone', await phone.locator('#fleet .btn').first().evaluate((el) => el.getBoundingClientRect().height >= 44 && el.getBoundingClientRect().width > 300));
 check('desktop nav hidden on phone', !(await phone.locator('nav[aria-label=Main]').isVisible()));
@@ -124,7 +149,7 @@ check('footer WhatsApp opens the business chat', (await footer.getByRole('link',
 // Photo credits
 check('footer links to photo credits', (await footer.getByRole('link', { name: 'Photo credits' }).getAttribute('href')) === '/credits');
 const credits = await desktop.goto(APP + '/credits');
-check('credits page lists all six photos with a source link', credits.status() === 200 && (await desktop.locator('.credits li').count()) === 6 && (await desktop.locator('.credits li a[href^="https://commons.wikimedia.org/wiki/File:"]').count()) === 6);
+check('credits page lists all ten photos with a source link', credits.status() === 200 && (await desktop.locator('.credits li').count()) === 10 && (await desktop.locator('.credits li a[href^="https://commons.wikimedia.org/wiki/File:"]').count()) === 10);
 await desktop.locator('nav[aria-label=Main] a', { hasText: 'Fleet' }).click();
 check('nav works from another page (credits to home fleet)', await desktop.waitForURL(APP + '/#fleet').then(() => true, () => false));
 await desktop.goto(APP + '/credits');
