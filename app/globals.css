@@ -31,6 +31,8 @@
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --duration: 200ms;
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
   --max-width: 1120px;
   --header-h: 65px;
 
@@ -136,7 +138,7 @@ section[id] {
 }
 
 .section {
-  padding-block: var(--space-16);
+  padding-block: var(--space-12);
 }
 
 @media (min-width: 768px) {
@@ -587,10 +589,6 @@ html[data-header='over'] .site-header:not(:has(.mobile-nav)) .mobile-menu .btn {
     grid-column: 1 / -1;
   }
 
-  .hero-actions .btn {
-    min-height: 52px;
-    padding-inline: var(--space-3);
-  }
 }
 
 /* Phone: sticky bottom action bar */
@@ -1636,6 +1634,7 @@ html[data-header='over'] .site-header:not(:has(.mobile-nav)) .mobile-menu .btn {
   opacity: 0;
 }
 
+/* Same size as the fleet filter chips */
 .trip-option span {
   display: inline-flex;
   align-items: center;
@@ -1643,6 +1642,7 @@ html[data-header='over'] .site-header:not(:has(.mobile-nav)) .mobile-menu .btn {
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--border);
   border-radius: 9999px;
+  font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1813,5 +1813,97 @@ html[data-header='over'] .site-header:not(:has(.mobile-nav)) .mobile-menu .btn {
 
   .route-strip-list[aria-hidden] {
     display: none;
+  }
+}
+
+/* Micro interactions. Hover only where a real pointer exists, press feedback everywhere,
+   transform and colour only, timing from the --dur-* tokens. */
+.fleet-photo img,
+.package-photo img {
+  transition: transform 600ms var(--ease);
+}
+
+.reason-icon,
+.chip,
+.contact-big {
+  transition: background-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.carousel-arrow,
+.carousel-dot,
+.destination-card,
+.teaser {
+  transition: transform var(--dur-fast) var(--ease), background-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+
+@media (hover: hover) {
+  .btn:hover:not(:active) {
+    transform: translateY(-1px);
+  }
+
+  .fleet-card:hover .fleet-photo img,
+  .package:hover .package-photo img {
+    transform: scale(1.04);
+  }
+
+  .reason:hover .reason-icon {
+    background: var(--accent);
+    color: #0f2a44;
+  }
+
+  .chip:hover:not([aria-pressed='true']) {
+    border-color: #0f2a44;
+  }
+
+  .contact-big:hover {
+    color: #0f2a44;
+  }
+}
+
+/* Touch screens: no hover leftovers after a tap */
+@media (hover: none) {
+  .card:hover {
+    box-shadow: none;
+  }
+
+  .destination-card:hover .destination-photo img,
+  .teaser:hover .teaser-photo img {
+    transform: none;
+  }
+}
+
+.chip:active,
+.carousel-arrow:active,
+.carousel-dot:active {
+  transform: scale(0.96);
+}
+
+.faq summary:active {
+  color: #0f2a44;
+}
+
+.destination-card:active,
+.teaser:active {
+  transform: scale(0.99);
+}
+
+/* Phone: compact chips so the five group sizes fit on two lines (trip chips match) */
+@media (max-width: 767px) {
+  .chip,
+  .trip-option span {
+    padding-inline: var(--space-3);
+    font-size: 0.875rem;
+  }
+}
+
+/* Reduced motion: the still route strip stays compact */
+@media (prefers-reduced-motion: reduce) {
+  .route-strip {
+    padding-block: var(--space-2);
+  }
+
+  .route-strip-list li {
+    gap: var(--space-3);
+    padding: var(--space-1) 0 var(--space-1) var(--space-3);
   }
 }

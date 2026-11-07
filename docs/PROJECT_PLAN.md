@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B3 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** B4.5 – micro interactions, then B4.6 regression; B4.10 waits for the user
+**Status:** Phase B4 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** B4.10 photo credits (waiting for the user); Phase C voice is deferred
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -204,8 +204,8 @@ User: a grey shadow around the carousel photo looks wrong, the site does not fee
 | B4.4 | Moving strip of real routes under the hero | done | 2026-11-07 | `components/RouteStrip.js`: 12 places from `lib/business.js`, seamless CSS loop, pauses on hover, read once by screen readers, still and wrapped with reduced motion (mutation caught). No sideways page scroll |
 | B4.9 | Professional phone numbers (user, 2026-11-07) | done | 2026-11-07 | `formatPhone` shows +91 73102 24488 everywhere; hero button reads "Call now" so it fits half a phone width. Unit 30/30, e2e-home 104/104 |
 | B4.10 | Photo credits (user asked to remove them) | blocked (waiting for the user) | | Most photos are CC BY or CC BY-SA, which require credit. Options: keep a small footer link, swap to CC0/public domain photos, or use the client's own photos |
-| B4.5 | Button and card micro interactions with motion tokens | todo | | |
-| B4.6 | Phase B4 regression | todo | | |
+| B4.5 | Button and card micro interactions with motion tokens | done | 2026-11-07 | `--dur-fast`/`--dur-base` tokens; hover only under (hover: hover): buttons lift 1px, car and package photos zoom, reason icons turn yellow, chip borders darken; press feedback on chips, carousel controls and cards; touch screens get no hover leftovers (mutation caught). Phone polish from a full page review: sections 48px on phones (was 64), chips fit two lines, still route strip compact. User asked for consistent buttons: audit at 390/820/1440 found hero buttons with 12px side padding and trip chips bigger than filter chips; unified and now tested at all three widths (the check failed on the old build) |
+| B4.6 | Phase B4 regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 104/104 · e2e-packages 22/22 · e2e-polish 63/63 · 0 failing parts |
 
 ### Phase C — Voice booking assistant (deferred by the user on 2026-11-07)
 Options discussed: A rule-based (free), B full LLM, C mix (rule-based flow in code plus an LLM only to pull details out of free Hinglish speech, behind an env flag). Recommended C. Decide when this phase starts.

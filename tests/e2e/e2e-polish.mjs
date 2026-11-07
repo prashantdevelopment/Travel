@@ -110,6 +110,39 @@ await calmStrip.goto(APP);
 check('reduced motion: strip stands still and every place fits on screen', await calmStrip.locator('section.route-strip').evaluate((s) => getComputedStyle(s.querySelector('.route-strip-track')).animationName === 'none' && [...s.querySelectorAll('.route-strip-list:not([aria-hidden]) li')].every((li) => { const r = li.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth; })));
 await calmStrip.close();
 
+// B4.5 Micro interactions: hover on pointer devices only, press feedback everywhere
+await desktop.goto(APP);
+await desktop.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
+check('desktop is treated as a hover device', await desktop.evaluate(() => matchMedia('(hover: hover)').matches));
+const ertiga = desktop.locator('#fleet li.fleet-card', { hasText: 'Maruti Ertiga' });
+await ertiga.scrollIntoViewIfNeeded();
+await ertiga.hover();
+check('hovering a car zooms its photo', await desktop.waitForFunction(() => { const t = getComputedStyle(document.querySelector('#fleet li[data-group="5to6"] .fleet-photo img')).transform; return t !== 'none' && new DOMMatrix(t).a > 1.03; }, null, { timeout: 2000 }).then(() => true, () => false));
+const bookBtn = desktop.locator('#book').getByRole('button', { name: 'Send booking on WhatsApp' });
+await bookBtn.scrollIntoViewIfNeeded();
+await bookBtn.hover();
+check('hovering a button lifts it by a pixel', await desktop.waitForFunction(() => new DOMMatrix(getComputedStyle(document.querySelector('.booking-submit')).transform).f === -1, null, { timeout: 2000 }).then(() => true, () => false));
+const reason = desktop.locator('#why .reason').first();
+await reason.scrollIntoViewIfNeeded();
+await reason.hover();
+check('hovering a reason lights its icon yellow', await desktop.waitForFunction(() => getComputedStyle(document.querySelector('#why .reason .reason-icon')).backgroundColor === 'rgb(245, 183, 0)', null, { timeout: 2000 }).then(() => true, () => false));
+const chip = desktop.locator('#fleet .chip', { hasText: '7 people' });
+await chip.scrollIntoViewIfNeeded();
+const box = await chip.boundingBox();
+await desktop.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+await desktop.mouse.down();
+check('pressing a chip gives instant feedback', await desktop.waitForFunction(() => { const t = getComputedStyle([...document.querySelectorAll('#fleet .chip')].find((c) => c.textContent === '7 people')).transform; return t !== 'none' && new DOMMatrix(t).a < 0.99; }, null, { timeout: 1000 }).then(() => true, () => false));
+await desktop.mouse.up();
+const touch = await newPage({ width: 390, height: 844 }, { isMobile: true, hasTouch: true });
+await touch.goto(APP);
+check('phone is treated as a touch device (no hover)', await touch.evaluate(() => !matchMedia('(hover: hover)').matches));
+const tCard = touch.locator('#fleet li.fleet-card', { hasText: 'Maruti Ertiga' });
+await tCard.scrollIntoViewIfNeeded();
+await tCard.locator('.fleet-photo').tap();
+await wait(800);
+check('tapping a car on a phone leaves no zoom stuck on the photo', (await tCard.locator('.fleet-photo img').evaluate((i) => getComputedStyle(i).transform)) === 'none');
+await touch.close();
+
 // B4.8 Smooth scrolling (Lenis): gentle on the wheel, instant with reduced motion, anchors land below the header
 await desktop.goto(APP);
 await desktop.waitForFunction(() => document.documentElement.classList.contains('lenis'));
@@ -153,7 +186,36 @@ for (const width of [360, 375, 390]) {
 await phone.goto(APP);
 check('phone: the car filter chips wrap instead of scrolling sideways', await phone.locator('#fleet .chips').evaluate((c) => getComputedStyle(c).flexWrap === 'wrap' && c.scrollWidth <= c.clientWidth));
 const pads = await phone.locator('main > section.section').evaluateAll((s) => [...new Set(s.map((el) => `${getComputedStyle(el).paddingTop}/${getComputedStyle(el).paddingBottom}`))]);
-check('phone: every home section has the same top and bottom spacing', pads.length === 1 && pads[0] === '64px/64px', JSON.stringify(pads));
+check('phone: every home section has the same top and bottom spacing (48px)', pads.length === 1 && pads[0] === '48px/48px', JSON.stringify(pads));
+const chipRows = await phone.locator('#fleet .chip').evaluateAll((cs) => new Set(cs.map((c) => Math.round(c.getBoundingClientRect().top))).size);
+check('phone: the five size chips fit on two lines', chipRows <= 2, String(chipRows));
+const chipHeights = await phone.locator('#fleet .chip').evaluateAll((cs) => cs.every((c) => c.getBoundingClientRect().height >= 44));
+check('phone: chips stay thumb-sized (44px)', chipHeights);
+
+// Every button, chip and icon has the same size and padding as its kind, on phone, tablet and desktop
+for (const width of [390, 820, 1440]) {
+  const view = await newPage({ width, height: 900 }, { reducedMotion: 'reduce' });
+  const kinds = {};
+  for (const path of ['/', '/packages']) {
+    await view.goto(APP + path);
+    const found = await view.evaluate(() => {
+      const visible = (sel) => [...document.querySelectorAll(sel)].filter((el) => el.getBoundingClientRect().width > 0);
+      const look = (el) => { const cs = getComputedStyle(el); return `h${Math.round(el.getBoundingClientRect().height)} p${cs.paddingTop}/${cs.paddingLeft} f${cs.fontSize} r${cs.borderRadius}`; };
+      return {
+        buttons: visible('.btn').map(look),
+        chips: [...visible('.chip'), ...visible('.trip-option span')].map(look),
+        icons: visible('.btn svg, .action-bar svg, .carousel-arrow svg').map((s) => Math.round(s.getBoundingClientRect().width)),
+        bar: visible('.action-bar a').map((a) => Math.round(a.getBoundingClientRect().height)),
+      };
+    });
+    for (const [k, list] of Object.entries(found)) kinds[k] = [...new Set([...(kinds[k] ?? []), ...list])];
+  }
+  check(`${width}px: every text button has one size and padding`, kinds.buttons.length === 1, JSON.stringify(kinds.buttons));
+  check(`${width}px: filter chips and trip chips match`, kinds.chips.length === 1, JSON.stringify(kinds.chips));
+  check(`${width}px: every button icon is 20px`, kinds.icons.length === 1 && kinds.icons[0] === 20, JSON.stringify(kinds.icons));
+  if (width < 768) check(`${width}px: action bar buttons match the other buttons (52px)`, kinds.bar.length === 1 && kinds.bar[0] === 52, JSON.stringify(kinds.bar));
+  await view.close();
+}
 
 if (SHOTS) {
   await desktop.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
