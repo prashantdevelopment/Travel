@@ -46,7 +46,7 @@ check('Book a ride goes to the booking section', (await hero.getByRole('link', {
 check('hero Call shows and dials the number', (await hero.getByRole('link', { name: 'Call 73102 24488' }).getAttribute('href')) === 'tel:+917310224488');
 const heroWa = await hero.getByRole('link', { name: 'WhatsApp', exact: true }).getAttribute('href');
 check('hero WhatsApp opens the chat with a booking message', heroWa === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), heroWa);
-check('voice card points to the booking assistant', (await hero.locator('a.hero-assistant').getAttribute('href')) === '#book' && (await hero.locator('a.hero-assistant').innerText()).includes('Book by voice'));
+check('hero card points to the booking form', (await hero.locator('a.hero-card').getAttribute('href')) === '#book' && (await hero.locator('a.hero-card').innerText()).includes('Book in a minute'));
 const heroImg = hero.locator('.hero-media img');
 check('hero photo loads first (priority, not lazy)', (await heroImg.getAttribute('loading')) !== 'lazy' && (await heroImg.getAttribute('fetchpriority')) === 'high' && (await heroImg.evaluate((i) => i.complete && i.naturalWidth > 0)));
 check('hero photo has descriptive alt text', (await heroImg.getAttribute('alt')).includes('Lahaul, Himachal Pradesh'));
@@ -96,7 +96,7 @@ check('nav Fleet link lands on the fleet section', (await desktop.locator('#flee
 check('how booking works shows 3 numbered steps in order', JSON.stringify(await desktop.locator('#how .step h3').allInnerTexts()) === JSON.stringify(['Tell us your trip', 'We confirm car and fare', 'Your car comes to you']) && (await desktop.locator('#how ol.steps').count()) === 1);
 check('why ride with us lists 4 reasons with icons', (await desktop.locator('#why .reason').count()) === 4 && (await desktop.locator('#why .reason svg').count()) === 4);
 check('why mentions the local office address', (await desktop.locator('#why').innerText()).includes('Baltana, Zirakpur'));
-check('sections appear in order: hero, destinations, packages, fleet, how, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'services', 'packages', 'fleet', 'how', 'why', 'reviews', 'faq', 'contact']));
+check('sections appear in order: hero, destinations, packages, fleet, how, book, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'services', 'packages', 'fleet', 'how', 'book', 'why', 'reviews', 'faq', 'contact']));
 
 // Happy customers: real trip photos from the client in a swipeable carousel, no text reviews yet
 const reviewsSec = desktop.locator('#reviews');

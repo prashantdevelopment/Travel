@@ -8,6 +8,9 @@ export const metadata = {
     'Kasol and Manali tour packages from Zirakpur with per person prices, plus Chardham Yatra, Do Dham and Shimla Manali trip plans. Book on WhatsApp.',
 };
 
+// Opens the home booking form with this package filled in.
+const bookLink = (name) => `/?package=${encodeURIComponent(name)}#book`;
+
 function PackagePhoto({ pkg }) {
   return (
     <div className="package-photo">
@@ -54,8 +57,8 @@ export default function PackagesPage() {
                     <a className="btn btn-primary" href={whatsappLink(tourMessage(tour))} target="_blank" rel="noopener noreferrer">
                       Book on WhatsApp
                     </a>
-                    <a className="btn btn-outline" href="/#book">
-                      Book by voice
+                    <a className="btn btn-outline" href={bookLink(`${tour.name} (${tour.days})`)}>
+                      Use the booking form
                     </a>
                   </div>
                 </div>
@@ -93,7 +96,7 @@ export default function PackagesPage() {
                     <a className="btn btn-primary" href={whatsappLink(fareMessage(plan))} target="_blank" rel="noopener noreferrer">
                       Ask fare on WhatsApp
                     </a>
-                    <a className="btn btn-outline" href="/#book">
+                    <a className="btn btn-outline" href={bookLink(plan.name)}>
                       Book this trip
                     </a>
                   </div>

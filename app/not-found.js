@@ -5,7 +5,7 @@ export default function NotFound() {
     <main id="main" className="section">
       <div className="container not-found">
         <h1>Page not found</h1>
-        <p className="muted">This page does not exist. The booking assistant and our numbers are on the home page.</p>
+        <p className="muted">This page does not exist. The booking form and our numbers are on the home page.</p>
         <a className="btn btn-primary" href="/">
           Go to home page
         </a>

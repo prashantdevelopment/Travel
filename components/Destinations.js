@@ -15,7 +15,7 @@ export default function Destinations() {
         <ul className="destination-grid">
           {destinations.map((place) => (
             <li key={place.id}>
-              <a className="destination-card" href="#book">
+              <a className="destination-card" href="#book" data-book-drop={place.book.drop} data-book-trip={place.book.trip}>
                 <span className="destination-photo">
                   <Image
                     src={`/images/destinations/${place.id}.jpg`}

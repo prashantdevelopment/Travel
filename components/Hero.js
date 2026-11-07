@@ -28,19 +28,19 @@ export default function Hero() {
           </div>
         </div>
 
-        <a className="card hero-assistant" href="#book">
-          <span className="mic-badge" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <rect x="9" y="3" width="6" height="11" rx="3" />
-              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+        <a className="card hero-card" href="#book">
+          <span className="hero-card-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 10h18M8 3v4M16 3v4M8 15h3" />
             </svg>
           </span>
-          <span className="hero-assistant-title">Book by voice</span>
+          <span className="hero-card-title">Book in a minute</span>
           <span className="muted">
-            Tap the mic and say where you want to go. The assistant asks a few questions and sends your booking on
-            WhatsApp. You can type too.
+            Tell us your pickup, drop and date in a short form. It opens WhatsApp with everything filled in, and we confirm
+            the car and fare.
           </span>
-          <span className="hero-assistant-link">Talk to the booking assistant</span>
+          <span className="hero-card-link">Open the booking form</span>
         </a>
       </div>
     </section>

@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B2 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** 12 – lib/agent.js (Phase C, voice booking assistant)
+**Status:** Phase B3 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** waiting for review; Phase C (voice) is deferred
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -184,7 +184,16 @@ User asked for more pages, more interaction, "our packages" and "happy customers
 | B2.5 | Phase B2 regression | done | 2026-11-07 | build ok · unit 21/21 · e2e-home 98/98 · e2e-packages 21/21 · 0 failing parts. Cleanup: no unused CSS, exports or debug leftovers |
 | B2.7 | Fix: carousel photo in focus stuck at the left edge on wide screens (user report with screenshot) | done | 2026-11-07 | Cause: slide offsetLeft was measured from the page, not the track, so centring and active detection were off by the container margin (a full slide on 1900px screens). Fix: `.carousel-track { position: relative }`; stronger pop out (neighbours scale 0.86, opacity 0.45). New checks centre the active photo after every move, also at 1920px; they fail without the fix (3 fails) and pass with it. Also: nav highlight now clears in sections without a nav link (mutation caught). e2e-home 103/103, e2e-packages 21/21, unit 21/21 |
 
-### Phase C — Voice booking assistant
+### Phase B3 — Booking form (planned 2026-11-07)
+Voice booking is deferred, so every Book button needs a working target. A short form that opens WhatsApp with the details filled in: no AI, no server, no cost. Voice can sit on top of it later.
+| # | Step | Status | Done on | Notes |
+|---|---|---|---|---|
+| B3.1 | `lib/booking.js`: validate the fields and build the WhatsApp message (unit tested) | done | 2026-11-07 | Pickup required, drop required unless a package, date required and not in the past, people 1 to 50; message lists only filled details, package bookings leave out the trip type. 9 unit tests; 3 mutations caught (past date, drop with package, trip type in package message) |
+| B3.2 | `#book` section with the form; Book buttons prefill it; every "by voice" promise replaced | done | 2026-11-07 | `components/BookSection.js` + `components/BookingForm.js` (labels, inline errors with aria, focus on first error, 48px inputs at 16px, success state with "Open WhatsApp again"). Prefill: data-book-* on cars and destinations, `/?package=` from /packages. Hero card now "Book in a minute", calendar icon on the phone Book button, FAQ, steps and 404 copy updated. New suite e2e-booking 29/29 (WhatsApp is recorded, never opened). Screenshot found date and time going out of line on error; fixed and tested |
+| B3.3 | Phase B3 regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 103/103 · e2e-packages 22/22 · 0 failing parts |
+
+### Phase C — Voice booking assistant (deferred by the user on 2026-11-07)
+Options discussed: A rule-based (free), B full LLM, C mix (rule-based flow in code plus an LLM only to pull details out of free Hinglish speech, behind an env flag). Recommended C. Decide when this phase starts.
 | # | Step | Status | Done on | Notes |
 |---|---|---|---|---|
 | 12 | `lib/agent.js`: pure conversation state machine plus unit tests covering every step, "start over", bad phone and FAQ | todo | | |

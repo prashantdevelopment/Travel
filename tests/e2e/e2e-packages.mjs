@@ -61,7 +61,8 @@ check('tour button prefills the package and its length on WhatsApp', tourHref ==
 const fareHref = await desktop.locator('#chardham').getByRole('link', { name: 'Ask fare on WhatsApp' }).getAttribute('href');
 check('plan button asks the fare for that plan on WhatsApp', fareHref === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, please share the fare for the Chardham Yatra package.'), fareHref);
 check('custom trip button opens WhatsApp', (await desktop.locator('#custom a').getAttribute('href')).startsWith('https://wa.me/917310224488?text='));
-check('voice booking buttons go to the home booking section', (await tourCards.first().getByRole('link', { name: 'Book by voice' }).getAttribute('href')) === '/#book');
+check('tour form button opens the home form with the package', (await tourCards.first().getByRole('link', { name: 'Use the booking form' }).getAttribute('href')) === '/?package=' + encodeURIComponent('Kasol Tour (3 days, 2 nights)') + '#book');
+check('plan button opens the home form with the plan', (await planCards.first().getByRole('link', { name: 'Book this trip' }).getAttribute('href')) === '/?package=' + encodeURIComponent('Chardham Yatra') + '#book');
 for (let i = 0; i < 6; i++) await desktop.locator('article.package').nth(i).scrollIntoViewIfNeeded();
 check('package photos load', await desktop.waitForFunction(() => [...document.querySelectorAll('.package-photo img')].every((i) => i.complete && i.naturalWidth > 0), null, { timeout: 10000 }).then(() => true, () => false));
 check('nav has a Packages link', (await desktop.locator('nav[aria-label=Main] a', { hasText: 'Packages' }).getAttribute('href')) === '/packages');

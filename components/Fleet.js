@@ -33,7 +33,7 @@ export default function Fleet() {
                   <span className="seats">{car.seats === 'Group' ? 'Group travel' : `${car.seats} seats`}</span>
                   <p className="muted">{car.note}</p>
                 </div>
-                <a className="btn btn-outline" href="#book">
+                <a className="btn btn-outline" href="#book" data-book-car={car.name}>
                   Book this car
                 </a>
               </div>
