@@ -1,5 +1,8 @@
 import Image from 'next/image';
+import FleetFilter from './FleetFilter';
 import { fleet } from '@/lib/business';
+
+const counts = fleet.reduce((acc, car) => ({ ...acc, [car.group]: (acc[car.group] ?? 0) + 1 }), { all: fleet.length });
 
 export default function Fleet() {
   return (
@@ -13,9 +16,9 @@ export default function Fleet() {
             suggest one.
           </p>
         </div>
-        <ul className="fleet-grid">
+        <FleetFilter counts={counts}>
           {fleet.map((car) => (
-            <li key={car.id} className="card fleet-card">
+            <li key={car.id} className="card fleet-card" data-group={car.group}>
               <div className="fleet-photo">
                 <Image
                   src={`/images/fleet/${car.id}.jpg`}
@@ -36,7 +39,7 @@ export default function Fleet() {
               </div>
             </li>
           ))}
-        </ul>
+        </FleetFilter>
       </div>
     </section>
   );

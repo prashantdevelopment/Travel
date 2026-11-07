@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import MobileActionBar from '@/components/MobileActionBar';
+import PageEffects from '@/components/PageEffects';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         {children}
         <Footer />
         <MobileActionBar />
+        <PageEffects />
       </body>
     </html>
   );

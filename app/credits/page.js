@@ -1,4 +1,4 @@
-import { photoCredits } from '@/lib/business';
+import { photoCredits } from '@/lib/credits';
 
 export const metadata = { title: 'Photo credits | Dhruv Fine Trip' };
 
