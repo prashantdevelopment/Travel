@@ -1,5 +1,5 @@
 import Hero from '@/components/Hero';
-import RouteStrip from '@/components/RouteStrip';
+import RoutePicker from '@/components/RoutePicker';
 import Destinations from '@/components/Destinations';
 import PackagesTeaser from '@/components/PackagesTeaser';
 import Fleet from '@/components/Fleet';
@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <main id="main">
       <Hero />
-      <RouteStrip />
+      <RoutePicker />
       <Destinations />
       <PackagesTeaser />
       <Fleet />

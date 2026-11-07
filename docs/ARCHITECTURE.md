@@ -110,4 +110,4 @@ The mic can't be tested headless, so E2E drives the **typed** flow, which uses t
 
 ## 8. Deployment
 
-`npm run build` → `npm start`. Set `ADMIN_TOKEN` on the host. HTTPS is required for the microphone, though `localhost` is fine in dev. Host choice is still open (see PROJECT_PLAN §10).
+Vercel (chosen 2026-11-07, deployed manually by the user). Import the GitHub repo; Vercel detects Next.js, so the default build (`next build`) and install (`npm install`) are used. No environment variables are needed today: there is no API route and bookings go to WhatsApp from the browser. The `/api/*` routes, `ADMIN_TOKEN` and the bookings store described above belong to the deferred voice phase (Phase C) and do not exist yet.

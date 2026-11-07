@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B4 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** B4.10 photo credits (waiting for the user); Phase C voice is deferred
+**Status:** Phase B5 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** waiting for review; B4.10 photo credits waits for the user; Phase C voice is deferred
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -206,6 +206,20 @@ User: a grey shadow around the carousel photo looks wrong, the site does not fee
 | B4.10 | Photo credits (user asked to remove them) | blocked (waiting for the user) | | Most photos are CC BY or CC BY-SA, which require credit. Options: keep a small footer link, swap to CC0/public domain photos, or use the client's own photos |
 | B4.5 | Button and card micro interactions with motion tokens | done | 2026-11-07 | `--dur-fast`/`--dur-base` tokens; hover only under (hover: hover): buttons lift 1px, car and package photos zoom, reason icons turn yellow, chip borders darken; press feedback on chips, carousel controls and cards; touch screens get no hover leftovers (mutation caught). Phone polish from a full page review: sections 48px on phones (was 64), chips fit two lines, still route strip compact. User asked for consistent buttons: audit at 390/820/1440 found hero buttons with 12px side padding and trip chips bigger than filter chips; unified and now tested at all three widths (the check failed on the old build) |
 | B4.6 | Phase B4 regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 104/104 · e2e-packages 22/22 · e2e-polish 63/63 · 0 failing parts |
+
+### Phase B5 — Mobile premium pass (planned 2026-11-07)
+User: on phones the text is too big, elements feel plain and the page is too long and straightforward. Phone only (max width 767px); desktop stays as it is; no sideways scrolling.
+| # | Step | Status | Done on | Notes |
+|---|---|---|---|---|
+| B5.1 | Phone type scale: smaller, tighter headings and compact controls | done | 2026-11-07 | h1 32px, h2 24px, card titles 16 to 17px, body 15px, every button 48px on phones (one size, tested) |
+| B5.2 | Compact layouts: destination tiles 2 by 2, packages and cars as photo rows, reasons 2 by 2, steps as a timeline | done | 2026-11-07 | Phone page 14,347px to 9,453px. Destinations now photo tiles with a scrim at every width. Fixed after screenshots: phone card padding leaking into photo rows, big step and reason titles, gap after the last step |
+| B5.3 | Full screen hero with text at the bottom (no extra card on phones), glass action bar | done | 2026-11-07 | Old phone tests for the previous layout updated on purpose; new checks for tiles, hero, heading sizes, 2 by 2 reasons. e2e-home 106/106, e2e-polish 63/63 |
+| B5.5 | Professional footer at every width (user, 2026-11-07) | done | 2026-11-07 | Navy footer: brand with labelled 44px social buttons, quick links, popular trips (link to their package), contact with icons, bottom bar. 4 columns on desktop, brand plus 3 columns on tablet, brand then 2 columns then contact on phones (all tested). Navy, brand with social icons, quick links, popular trips, contact with icons, bottom bar |
+| B5.4 | Before and after phone screenshots, Phase B5 regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 106/106 · e2e-packages 22/22 · e2e-polish 71/71 · 0 failing parts |
+| B5.6 | Remove the hero booking card at every width (user, 2026-11-07) | done | 2026-11-07 | Card, its styles and its tests removed; hero copy stands alone over the photo |
+| B5.7 | Replace the moving route strip with an interactive route picker (user: second section is plain) | done | 2026-11-07 | `components/RoutePicker.js` + `lib/routes.js`: 8 places, Chardham first as an SVG hill road drawn from dham to dham with the car following it (animateMotion, same easing as the line; a mismatch found by screenshot made the car race ahead, now tested and caught by mutation). Straight drives show a dashed road and a driving car. Book this route prefills the form (drop or Chardham package), fare on WhatsApp. Route strip removed. e2e-polish 78/78. Approximate road distance and drive time from Zirakpur, suggested car, book and fare buttons. Distances are approximate and should be checked by the client |
+| B5.9 | Where we go: scroll based stacking cards (user, 2026-11-07) | done | 2026-11-07 | Sticky cards 14px apart, `components/StackProgress.js` sets --p so the covered card shrinks to 92% and dims; reduced motion keeps them flat. User: the last card must land like the others. Padding after the list did not work (sticky stays inside the content box, all four collapsed); a content spacer (::after) fixed it. Exit gap equals the normal section padding (48px phone, 96px desktop), so no extra empty space; all tested. Each place a large card that sticks; the next slides over it while the one below shrinks and dims. No sideways scroll; reduced motion keeps cards flat |
+| B5.8 | Phase regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 106/106 · e2e-packages 22/22 · e2e-polish 84/84 · 0 failing parts |
 
 ### Phase C — Voice booking assistant (deferred by the user on 2026-11-07)
 Options discussed: A rule-based (free), B full LLM, C mix (rule-based flow in code plus an LLM only to pull details out of free Hinglish speech, behind an env flag). Recommended C. Decide when this phase starts.

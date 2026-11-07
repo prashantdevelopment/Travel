@@ -89,7 +89,7 @@ await desktop.locator('a.destination-card', { hasText: 'Delhi' }).click();
 check('a destination fills the drop and resets the rest', (await form.locator('#book-drop').inputValue()) === 'Delhi' && (await form.locator('#book-car').inputValue()) === '');
 await desktop.locator('a.destination-card', { hasText: 'Chandigarh tricity' }).click();
 check('the tricity card picks daily pick and drop', await form.locator('input[name=trip][value="Daily pick and drop"]').isChecked());
-check('hero card opens the form', (await desktop.locator('a.hero-card').getAttribute('href')) === '#book' && (await desktop.locator('a.hero-card').innerText()).includes('Book in a minute'));
+check('hero Book a ride opens the form', (await desktop.locator('section.hero').getByRole('link', { name: 'Book a ride' }).getAttribute('href')) === '#book');
 check('no page promises voice booking any more', !/by voice|booking assistant|tap the mic/i.test(await desktop.locator('body').innerText()));
 
 // From the packages page

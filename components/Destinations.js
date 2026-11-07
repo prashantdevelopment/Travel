@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import StackProgress from './StackProgress';
 import { destinations } from '@/lib/business';
 
 export default function Destinations() {
@@ -13,15 +14,15 @@ export default function Destinations() {
           </p>
         </div>
         <ul className="destination-grid">
-          {destinations.map((place) => (
-            <li key={place.id}>
+          {destinations.map((place, i) => (
+            <li key={place.id} style={{ '--i': i }}>
               <a className="destination-card" href="#book" data-book-drop={place.book.drop} data-book-trip={place.book.trip}>
                 <span className="destination-photo">
                   <Image
                     src={`/images/destinations/${place.id}.jpg`}
                     alt={place.photo.alt}
                     fill
-                    sizes="(min-width: 1120px) 540px, (min-width: 640px) 50vw, 100vw"
+                    sizes="(min-width: 1120px) 1056px, 100vw"
                   />
                 </span>
                 <span className="destination-text">
@@ -34,6 +35,7 @@ export default function Destinations() {
             </li>
           ))}
         </ul>
+        <StackProgress />
       </div>
     </section>
   );

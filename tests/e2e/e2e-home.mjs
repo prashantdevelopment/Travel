@@ -46,7 +46,7 @@ check('Book a ride goes to the booking section', (await hero.getByRole('link', {
 check('hero Call now dials the first number', (await hero.getByRole('link', { name: 'Call now' }).getAttribute('href')) === 'tel:+917310224488');
 const heroWa = await hero.getByRole('link', { name: 'WhatsApp', exact: true }).getAttribute('href');
 check('hero WhatsApp opens the chat with a booking message', heroWa === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), heroWa);
-check('hero card points to the booking form', (await hero.locator('a.hero-card').getAttribute('href')) === '#book' && (await hero.locator('a.hero-card').innerText()).includes('Book in a minute'));
+check('hero has no extra booking card (removed on request)', (await desktop.locator('.hero-card').count()) === 0 && !(await hero.innerText()).includes('Book in a minute'));
 const heroImg = hero.locator('.hero-media img');
 check('hero photo loads first (priority, not lazy)', (await heroImg.getAttribute('loading')) !== 'lazy' && (await heroImg.getAttribute('fetchpriority')) === 'high' && (await heroImg.evaluate((i) => i.complete && i.naturalWidth > 0)));
 check('hero photo has descriptive alt text', (await heroImg.getAttribute('alt')).includes('Lahaul, Himachal Pradesh'));
@@ -78,7 +78,7 @@ for (let i = 0; i < 4; i++) await destCards.nth(i).scrollIntoViewIfNeeded();
 check('destination photos load with alt text', await desktop.waitForFunction(() => [...document.querySelectorAll('.destination-card img')].every((i) => i.complete && i.naturalWidth > 0 && i.alt.length > 10), null, { timeout: 10000 }).then(() => true, () => false));
 check('destination text sits on a dark scrim (desktop)', await destCards.first().evaluate((a) => getComputedStyle(a, '::after').backgroundImage.includes('0.92)') && getComputedStyle(a).color === 'rgb(255, 255, 255)'));
 // offsetTop measures layout, not the reveal animation's transform.
-check('destinations: two large columns on desktop', await destCards.evaluateAll((as) => new Set(as.map((a) => a.parentElement.offsetTop)).size === 2 && as[0].offsetWidth > 480));
+check('destinations: one wide card per place, each sticking a little lower than the last', await destCards.evaluateAll((as) => as.every((a) => a.offsetWidth > 1000) && as.map((a) => getComputedStyle(a.parentElement).position).every((p) => p === 'sticky') && new Set(as.map((a) => getComputedStyle(a.parentElement).top)).size === as.length));
 
 // Fleet
 const fleetCards = desktop.locator('#fleet li.fleet-card');
@@ -96,7 +96,7 @@ check('nav Fleet link lands on the fleet section', (await desktop.locator('#flee
 check('how booking works shows 3 numbered steps in order', JSON.stringify(await desktop.locator('#how .step h3').allInnerTexts()) === JSON.stringify(['Tell us your trip', 'We confirm car and fare', 'Your car comes to you']) && (await desktop.locator('#how ol.steps').count()) === 1);
 check('why ride with us lists 4 reasons with icons', (await desktop.locator('#why .reason').count()) === 4 && (await desktop.locator('#why .reason svg').count()) === 4);
 check('why mentions the local office address', (await desktop.locator('#why').innerText()).includes('Baltana, Zirakpur'));
-check('sections appear in order: hero, route strip, destinations, packages, fleet, how, book, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'route-strip', 'services', 'packages', 'fleet', 'how', 'book', 'why', 'reviews', 'faq', 'contact']));
+check('sections appear in order: hero, route picker, destinations, packages, fleet, how, book, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'routes', 'services', 'packages', 'fleet', 'how', 'book', 'why', 'reviews', 'faq', 'contact']));
 
 // Happy customers: real trip photos from the client in a swipeable carousel, no text reviews yet
 const reviewsSec = desktop.locator('#reviews');
@@ -199,16 +199,18 @@ check('action bar does not cover the footer at the bottom', await phone.evaluate
 await phone.evaluate(() => window.scrollTo(0, 0));
 check('action bar hidden on desktop', !(await desktop.locator('nav[aria-label="Quick actions"]').isVisible()));
 check('anchored sections land below the sticky header', await phone.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#fleet')).scrollMarginTop) >= document.querySelector('.site-header').offsetHeight));
-check('destination text on a solid navy panel below the photo (phone)', await phone.locator('a.destination-card').first().evaluate((a) => getComputedStyle(a).backgroundColor === 'rgb(15, 42, 68)' && a.querySelector('.destination-text').getBoundingClientRect().top >= a.querySelector('.destination-photo').getBoundingClientRect().bottom - 1));
+check('phone: destination cards show the place, its places and a Book button over the photo', await phone.locator('a.destination-card').first().evaluate((a) => getComputedStyle(a, '::after').backgroundImage.includes('0.92)') && getComputedStyle(a.querySelector('.destination-desc')).display !== 'none' && a.querySelector('.destination-cta')));
+check('phone: hero is one clean screen with its buttons in view', await phone.evaluate(() => !document.querySelector('.hero-card') && document.querySelector('.hero-actions').getBoundingClientRect().bottom <= innerHeight));
+check('phone: headings are sized for a small screen (h1 32px, h2 24px)', await phone.evaluate(() => getComputedStyle(document.querySelector('h1')).fontSize === '32px' && getComputedStyle(document.querySelector('#fleet-title')).fontSize === '24px'));
 check('destination cards stay short on phone (< 75% of the screen)', await phone.locator('a.destination-card').evaluateAll((as) => as.every((a) => a.getBoundingClientRect().height < window.innerHeight * 0.75)));
 check('phone: one photo in focus with the next one peeking in (layout width, not the scale effect)', await phone.locator('.carousel-slide').first().evaluate((s) => s.offsetWidth > window.innerWidth * 0.7 && s.offsetWidth < window.innerWidth * 0.85));
 check('contact: cards come before the map on phone', await phone.evaluate(() => document.querySelector('.contact-list').getBoundingClientRect().bottom <= document.querySelector('.contact-map').getBoundingClientRect().top));
-check('steps and reasons stack in one column on phone', await phone.evaluate(() => ['#how .step', '#why .reason'].every((sel) => new Set([...document.querySelectorAll(sel)].map((el) => Math.round(el.getBoundingClientRect().left))).size === 1)));
+check('phone: steps form one timeline column, reasons sit 2 by 2', await phone.evaluate(() => new Set([...document.querySelectorAll('#how .step')].map((el) => Math.round(el.getBoundingClientRect().left))).size === 1 && new Set([...document.querySelectorAll('#why .reason')].map((el) => Math.round(el.getBoundingClientRect().left))).size === 2));
 const tablet = await newPage({ width: 820, height: 1180 });
 await tablet.goto(APP);
 check('tablet: destination text sits over the photo on a scrim', await tablet.locator('a.destination-card').first().evaluate((a) => getComputedStyle(a.querySelector('.destination-photo')).position === 'absolute' && getComputedStyle(a, '::after').backgroundImage.includes('0.92)')));
 check('tablet: no horizontal scroll', await tablet.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
-check('destinations: one column on phone', await phone.locator('a.destination-card').evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().left))).size === 1));
+check('phone: destinations stack in one column', await phone.locator('a.destination-card').evaluateAll((as) => new Set(as.map((a) => Math.round(a.getBoundingClientRect().left))).size === 1));
 check('fleet is one column on phone', await phone.locator('#fleet li.fleet-card').evaluateAll((li) => new Set(li.map((el) => Math.round(el.getBoundingClientRect().left))).size === 1));
 check('Book this car is thumb-sized on phone', await phone.locator('#fleet .btn').first().evaluate((el) => el.getBoundingClientRect().height >= 44 && el.getBoundingClientRect().width > 300));
 check('desktop nav hidden on phone', !(await phone.locator('nav[aria-label=Main]').isVisible()));

@@ -88,27 +88,51 @@ await phone.locator('.mobile-menu button').click();
 
 // B4.3 Hero entrance and slow photo zoom
 await desktop.goto(APP);
-const heroAnim = await desktop.evaluate(() => [...document.querySelectorAll('.hero-copy > *, .hero-card')].map((el) => [getComputedStyle(el).animationName, getComputedStyle(el).animationDelay]));
-check('hero lines rise in one after another, the card last', JSON.stringify(heroAnim) === JSON.stringify([['hero-in', '0s'], ['hero-in', '0.08s'], ['hero-in', '0.16s'], ['hero-in', '0.24s'], ['hero-in', '0.36s']]), JSON.stringify(heroAnim));
+const heroAnim = await desktop.evaluate(() => [...document.querySelectorAll('.hero-copy > *')].map((el) => [getComputedStyle(el).animationName, getComputedStyle(el).animationDelay]));
+check('hero lines rise in one after another', JSON.stringify(heroAnim) === JSON.stringify([['hero-in', '0s'], ['hero-in', '0.08s'], ['hero-in', '0.16s'], ['hero-in', '0.24s']]), JSON.stringify(heroAnim));
 check('hero photo zooms out slowly', (await desktop.locator('.hero-media img').evaluate((i) => getComputedStyle(i).animationName + ' ' + getComputedStyle(i).animationDuration)) === 'hero-zoom 18s');
-check('hero text is fully visible once the entrance ends', await desktop.waitForFunction(() => [...document.querySelectorAll('.hero-copy > *, .hero-card')].every((el) => getComputedStyle(el).opacity === '1'), null, { timeout: 3000 }).then(() => true, () => false));
+check('hero text is fully visible once the entrance ends', await desktop.waitForFunction(() => [...document.querySelectorAll('.hero-copy > *')].every((el) => getComputedStyle(el).opacity === '1'), null, { timeout: 3000 }).then(() => true, () => false));
 const still = await newPage({ width: 1440, height: 900 }, { reducedMotion: 'reduce' });
 await still.goto(APP);
-check('reduced motion: hero shows at once', await still.evaluate(() => [...document.querySelectorAll('.hero-copy > *, .hero-card')].every((el) => parseFloat(getComputedStyle(el).animationDuration) < 0.01)));
+check('reduced motion: hero shows at once', await still.evaluate(() => [...document.querySelectorAll('.hero-copy > *')].every((el) => parseFloat(getComputedStyle(el).animationDuration) < 0.01)));
 await still.close();
 
-// B4.4 Moving strip of places under the hero
-const strip = desktop.locator('section.route-strip');
+// B5.7 Route picker: the second section, Chardham drawn as a path the car follows from dham to dham
+const picker = desktop.locator('#routes');
 await desktop.goto(APP);
-check('route strip lists the 12 places, drawn twice for the loop', (await strip.locator('.route-strip-list').count()) === 2 && (await strip.locator('.route-strip-list').first().locator('li').count()) === 12);
-check('screen readers hear the places once', (await strip.locator('.route-strip-list[aria-hidden=true]').count()) === 1 && (await strip.getAttribute('aria-label')) === 'Places we drive to');
-check('the strip moves on its own', (await strip.locator('.route-strip-track').evaluate((t) => getComputedStyle(t).animationName + ' ' + getComputedStyle(t).animationPlayState)) === 'route-strip running');
-await strip.hover();
-check('hovering pauses the strip', (await strip.locator('.route-strip-track').evaluate((t) => getComputedStyle(t).animationPlayState)) === 'paused');
-const calmStrip = await newPage({ width: 390, height: 844 }, { reducedMotion: 'reduce' });
-await calmStrip.goto(APP);
-check('reduced motion: strip stands still and every place fits on screen', await calmStrip.locator('section.route-strip').evaluate((s) => getComputedStyle(s.querySelector('.route-strip-track')).animationName === 'none' && [...s.querySelectorAll('.route-strip-list:not([aria-hidden]) li')].every((li) => { const r = li.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth; })));
-await calmStrip.close();
+check('route picker is the section right after the hero', await desktop.evaluate(() => document.querySelector('main > section.hero').nextElementSibling?.id === 'routes'));
+check('eight places to pick, Chardham Yatra chosen first', (await picker.locator('.route-chip').count()) === 8 && (await picker.locator('.route-chip[aria-pressed=true]').innerText()) === 'Chardham Yatra');
+check('Chardham shows its five stops in order', JSON.stringify(await picker.locator('.circuit-stop text').evaluateAll((ts) => ts.map((t) => t.textContent))) === JSON.stringify(['Haridwar', 'Yamunotri', 'Gangotri', 'Kedarnath', 'Badrinath']));
+// Wait past the first drive so a fresh pick proves the car restarts with the path (SMIL starts with the page otherwise).
+await wait(4000);
+await picker.locator('.route-chip', { hasText: 'Delhi' }).click();
+await picker.locator('.route-chip', { hasText: 'Chardham' }).click();
+await wait(1200);
+const carAt = await picker.locator('.circuit').evaluate((svg) => {
+  const s = svg.getBoundingClientRect(), c = svg.querySelector('.circuit-car').getBoundingClientRect();
+  return (c.left + c.width / 2 - s.left) / s.width;
+});
+check('the car follows the path from stop to stop (mid way, not at the end)', carAt > 0.1 && carAt < 0.85, carAt.toFixed(2));
+await wait(3000);
+const carEnd = await picker.locator('.circuit').evaluate((svg) => {
+  const s = svg.getBoundingClientRect(), c = svg.querySelector('.circuit-car').getBoundingClientRect();
+  return (c.left + c.width / 2 - s.left) / s.width;
+});
+check('the car finishes at Badrinath', carEnd > 0.88, carEnd.toFixed(2));
+check('Chardham facts: distance, days and car', JSON.stringify(await picker.locator('.route-facts dd').allInnerTexts()) === JSON.stringify(['about 1,600 km', '10 to 12 days', 'Innova Crysta or Tempo Traveller']));
+await picker.locator('.route-chip', { hasText: 'Delhi' }).click();
+check('Delhi shows a straight drive with its own figures', (await picker.locator('.route-line').isVisible()) && JSON.stringify(await picker.locator('.route-facts dd').allInnerTexts()) === JSON.stringify(['about 250 km', 'about 5 hours', 'Swift Dzire or Toyota Etios']));
+check('Delhi fare message names the route', (await picker.getByRole('link', { name: 'Ask fare on WhatsApp' }).getAttribute('href')) === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, please share the fare from Zirakpur to Delhi.'));
+await picker.getByRole('link', { name: 'Book this route' }).click();
+check('Book this route fills the drop in the booking form', (await desktop.locator('#book-drop').inputValue()) === 'Delhi');
+await desktop.goto(APP);
+await desktop.locator('#routes').getByRole('link', { name: 'Book this route' }).click();
+check('booking Chardham fills the package in the form', (await desktop.locator('.booking-package strong').innerText()) === 'Chardham Yatra');
+check('figures are marked as approximate', (await desktop.locator('#routes .route-disclaimer').innerText()).startsWith('Approximate road figures'));
+const calmRoutes = await newPage({ width: 390, height: 844 }, { reducedMotion: 'reduce' });
+await calmRoutes.goto(APP);
+check('reduced motion: the car waits at Badrinath with no drive', await calmRoutes.locator('#routes .circuit').evaluate((svg) => !svg.querySelector('animateMotion') && svg.querySelector('.circuit-car path').getAttribute('transform') === 'translate(316 92)'));
+await calmRoutes.close();
 
 // B4.5 Micro interactions: hover on pointer devices only, press feedback everywhere
 await desktop.goto(APP);
@@ -143,6 +167,61 @@ await wait(800);
 check('tapping a car on a phone leaves no zoom stuck on the photo', (await tCard.locator('.fleet-photo img').evaluate((i) => getComputedStyle(i).transform)) === 'none');
 await touch.close();
 
+// B5.5 Professional footer at every width
+await desktop.goto(APP + '/packages');
+const foot = desktop.locator('footer.site-footer');
+check('footer is navy with white headings', (await foot.evaluate((f) => getComputedStyle(f).backgroundColor)) === 'rgb(15, 42, 68)' && JSON.stringify(await foot.locator('h2').allInnerTexts()) === JSON.stringify(['QUICK LINKS', 'POPULAR TRIPS', 'CONTACT']));
+check('quick links go to the right places', JSON.stringify(await foot.locator('nav[aria-label="Quick links"] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')))) === JSON.stringify(['/packages', '/#fleet', '/#services', '/#book', '/#faq', '/#contact']));
+check('popular trips open their package', JSON.stringify(await foot.locator('nav[aria-label="Popular trips"] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')))) === JSON.stringify(['/packages#kasol-3d', '/packages#manali-4d', '/packages#chardham', '/packages#do-dham']));
+check('footer contact has an icon on every line', await foot.locator('address li').evaluateAll((lis) => lis.length === 4 && lis.every((li) => li.querySelector('svg'))));
+check('social buttons are labelled and thumb-sized', await foot.locator('.footer-social a').evaluateAll((as) => as.length === 2 && as.every((a) => a.getAttribute('aria-label') && a.getBoundingClientRect().width >= 44)));
+const footCols = async (page) => page.locator('footer .footer-grid > *').evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+const deskTops = await footCols(desktop);
+check('desktop footer: four columns in one row', new Set(deskTops).size === 1, JSON.stringify(deskTops));
+for (const [width, rows] of [[820, 2], [390, 3]]) {
+  const v = await newPage({ width, height: 900 }, { reducedMotion: 'reduce' });
+  await v.goto(APP + '/packages');
+  const tops = await footCols(v);
+  check(`${width}px footer: brand on top, then the columns (${rows} rows)`, new Set(tops).size === rows, JSON.stringify(tops));
+  await v.close();
+}
+
+// B5.9 Where we go: stacking cards driven by scroll
+const stackPage = await newPage({ width: 1440, height: 900 });
+await stackPage.goto(APP);
+await stackPage.waitForFunction(() => document.documentElement.classList.contains('lenis'));
+await stackPage.mouse.move(720, 450);
+const gridTop = () => stackPage.evaluate(() => document.querySelector('.destination-grid').getBoundingClientRect().top);
+while ((await gridTop()) > 450) { await stackPage.mouse.wheel(0, 200); await wait(150); }
+await settle(stackPage);
+check('at the start no card is covered yet', await stackPage.evaluate(() => parseFloat(document.querySelector('.destination-grid > li').style.getPropertyValue('--p') || '0') < 0.2));
+for (let i = 0; i < 4; i++) { await stackPage.mouse.wheel(0, 200); await wait(150); }
+await settle(stackPage);
+const covered = await stackPage.evaluate(() => {
+  const li = document.querySelector('.destination-grid > li');
+  return { p: parseFloat(li.style.getPropertyValue('--p')), scale: new DOMMatrix(getComputedStyle(li.querySelector('.destination-card')).transform).a, dim: parseFloat(getComputedStyle(li.querySelector('.destination-card'), '::before').opacity) };
+});
+check('scrolling slides the next card over: the first one shrinks and dims', covered.p > 0.5 && covered.scale < 0.97 && covered.dim > 0.25, JSON.stringify(covered));
+check('the covered card stays pinned under the header', await stackPage.evaluate(() => Math.abs(document.querySelector('.destination-grid > li').getBoundingClientRect().top - (document.querySelector('.site-header').offsetHeight + 16)) < 3));
+// Keep going until the last card has landed: all four sit stacked, each 14px lower than the one before.
+const headerH = await stackPage.evaluate(() => document.querySelector('.site-header').offsetHeight);
+const lastTop = () => stackPage.evaluate(() => [...document.querySelectorAll('.destination-grid > li')].at(-1).getBoundingClientRect().top);
+for (let i = 0; i < 40 && (await lastTop()) > headerH + 16 + 3 * 14 + 1; i++) { await stackPage.mouse.wheel(0, 100); await wait(120); }
+await settle(stackPage);
+const landed = await stackPage.evaluate(() => [...document.querySelectorAll('.destination-grid > li')].map((li) => Math.round(li.getBoundingClientRect().top)));
+check('the last card also lands on the stack, like the others', landed.every((top, i) => Math.abs(top - (headerH + 16 + i * 14)) < 4), JSON.stringify(landed));
+while ((await stackPage.evaluate(() => document.getElementById('packages').getBoundingClientRect().top)) > 675) { await stackPage.mouse.wheel(0, 120); await wait(130); }
+await settle(stackPage);
+const exitGap = await stackPage.evaluate(() => ({ gap: Math.round(document.getElementById('packages').getBoundingClientRect().top - [...document.querySelectorAll('.destination-grid > li')].at(-1).getBoundingClientRect().bottom), pad: parseFloat(getComputedStyle(document.getElementById('services')).paddingBottom) }));
+check('no extra empty space under the stack as it leaves (only the normal section gap)', Math.abs(exitGap.gap - exitGap.pad) < 2, JSON.stringify(exitGap));
+await stackPage.close();
+const calmStack = await newPage({ width: 390, height: 844 }, { reducedMotion: 'reduce' });
+await calmStack.goto(APP);
+await calmStack.evaluate(() => window.scrollTo(0, document.querySelector('.destination-grid').offsetTop + 500));
+await wait(500);
+check('reduced motion: cards stack but never shrink', await calmStack.evaluate(() => [...document.querySelectorAll('.destination-grid > li')].every((li) => !li.style.getPropertyValue('--p'))));
+await calmStack.close();
+
 // B4.8 Smooth scrolling (Lenis): gentle on the wheel, instant with reduced motion, anchors land below the header
 await desktop.goto(APP);
 await desktop.waitForFunction(() => document.documentElement.classList.contains('lenis'));
@@ -172,8 +251,8 @@ for (const width of [360, 375, 390]) {
     const out = await small.evaluate(() => {
       const w = document.documentElement.clientWidth;
       const bad = [...document.querySelectorAll('body *')].filter((el) => {
-        // Clipped on purpose: the carousel track, the moving route strip and the zooming hero photo.
-        if (el.closest('.carousel-track, .route-strip-track, .hero-media, .sr-only, .skip-link, dialog')) return false;
+        // Clipped on purpose: the carousel track and the zooming hero photo.
+        if (el.closest('.carousel-track, .hero-media, .sr-only, .skip-link, dialog')) return false;
         const r = el.getBoundingClientRect();
         return r.width > 0 && (r.right > w + 1 || r.left < -1);
       });
@@ -213,7 +292,7 @@ for (const width of [390, 820, 1440]) {
   check(`${width}px: every text button has one size and padding`, kinds.buttons.length === 1, JSON.stringify(kinds.buttons));
   check(`${width}px: filter chips and trip chips match`, kinds.chips.length === 1, JSON.stringify(kinds.chips));
   check(`${width}px: every button icon is 20px`, kinds.icons.length === 1 && kinds.icons[0] === 20, JSON.stringify(kinds.icons));
-  if (width < 768) check(`${width}px: action bar buttons match the other buttons (52px)`, kinds.bar.length === 1 && kinds.bar[0] === 52, JSON.stringify(kinds.bar));
+  if (width < 768) check(`${width}px: action bar buttons match the other buttons`, kinds.bar.length === 1 && kinds.buttons.length === 1 && kinds.buttons[0].startsWith(`h${kinds.bar[0]} `), JSON.stringify([kinds.bar, kinds.buttons]));
   await view.close();
 }
 
