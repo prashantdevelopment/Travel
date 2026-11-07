@@ -56,5 +56,21 @@ export default function PageEffects() {
     return () => observer.disconnect();
   }, [pathname]);
 
+  // Home: the header floats over the hero photo until the visitor scrolls a little.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (pathname !== '/') {
+      delete root.dataset.header;
+      return;
+    }
+    const update = () => (window.scrollY < 24 ? (root.dataset.header = 'over') : delete root.dataset.header);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', update);
+      delete root.dataset.header;
+    };
+  }, [pathname]);
+
   return null;
 }

@@ -33,6 +33,13 @@ export default function Contact() {
                 Get directions
               </a>
             </li>
+            <li className="card contact-item">
+              <h3>Facebook</h3>
+              <p className="muted">See our latest trips and updates.</p>
+              <a className="btn btn-outline" href={business.facebook} target="_blank" rel="noopener noreferrer">
+                Follow us on Facebook
+              </a>
+            </li>
           </ul>
           <div className="contact-map">
             <iframe

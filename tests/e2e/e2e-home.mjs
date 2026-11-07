@@ -43,7 +43,7 @@ check('one h1, the hero promise', (await desktop.locator('h1').count()) === 1 &&
 // Hero CTAs
 const hero = desktop.locator('section.hero');
 check('Book a ride goes to the booking section', (await hero.getByRole('link', { name: 'Book a ride' }).getAttribute('href')) === '#book');
-check('hero Call shows and dials the number', (await hero.getByRole('link', { name: 'Call 73102 24488' }).getAttribute('href')) === 'tel:+917310224488');
+check('hero Call now dials the first number', (await hero.getByRole('link', { name: 'Call now' }).getAttribute('href')) === 'tel:+917310224488');
 const heroWa = await hero.getByRole('link', { name: 'WhatsApp', exact: true }).getAttribute('href');
 check('hero WhatsApp opens the chat with a booking message', heroWa === 'https://wa.me/917310224488?text=' + encodeURIComponent('Hi Dhruv Fine Trip, I want to book a taxi.'), heroWa);
 check('hero card points to the booking form', (await hero.locator('a.hero-card').getAttribute('href')) === '#book' && (await hero.locator('a.hero-card').innerText()).includes('Book in a minute'));
@@ -96,7 +96,7 @@ check('nav Fleet link lands on the fleet section', (await desktop.locator('#flee
 check('how booking works shows 3 numbered steps in order', JSON.stringify(await desktop.locator('#how .step h3').allInnerTexts()) === JSON.stringify(['Tell us your trip', 'We confirm car and fare', 'Your car comes to you']) && (await desktop.locator('#how ol.steps').count()) === 1);
 check('why ride with us lists 4 reasons with icons', (await desktop.locator('#why .reason').count()) === 4 && (await desktop.locator('#why .reason svg').count()) === 4);
 check('why mentions the local office address', (await desktop.locator('#why').innerText()).includes('Baltana, Zirakpur'));
-check('sections appear in order: hero, destinations, packages, fleet, how, book, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'services', 'packages', 'fleet', 'how', 'book', 'why', 'reviews', 'faq', 'contact']));
+check('sections appear in order: hero, route strip, destinations, packages, fleet, how, book, why, reviews, faq, contact', JSON.stringify(await desktop.locator('main > section').evaluateAll((s) => s.map((el) => el.id || el.className))) === JSON.stringify(['hero', 'route-strip', 'services', 'packages', 'fleet', 'how', 'book', 'why', 'reviews', 'faq', 'contact']));
 
 // Happy customers: real trip photos from the client in a swipeable carousel, no text reviews yet
 const reviewsSec = desktop.locator('#reviews');
@@ -143,7 +143,8 @@ check('FAQ answers never promise a price', !/₹|Rs\.?\s?\d|INR/.test(await desk
 
 // Contact (nav Contact lands here)
 const contact = desktop.locator('#contact');
-check('contact lists both numbers as tap to call', JSON.stringify(await contact.locator('a.contact-big').evaluateAll((as) => as.map((a) => [a.getAttribute('href'), a.textContent]))) === JSON.stringify([['tel:+917310224488', '73102 24488'], ['tel:+919621110066', '96211 10066']]));
+check('contact lists both numbers as tap to call', JSON.stringify(await contact.locator('a.contact-big').evaluateAll((as) => as.map((a) => [a.getAttribute('href'), a.textContent]))) === JSON.stringify([['tel:+917310224488', '+91 73102 24488'], ['tel:+919621110066', '+91 96211 10066']]));
+check('numbers read the professional way everywhere (+91 and a space after five digits)', await desktop.evaluate(() => [...document.querySelectorAll('a[href^="tel:"]')].filter((a) => /\d{5}/.test(a.textContent)).every((a) => /^\+91 \d{5} \d{5}$/.test(a.textContent.trim()))));
 check('contact WhatsApp opens the booking chat', (await contact.getByRole('link', { name: 'Chat on WhatsApp' }).getAttribute('href')).startsWith('https://wa.me/917310224488?text='));
 check('contact shows the office address and directions', (await contact.locator('address').innerText()).includes('Ravindra Enclave') && (await contact.getByRole('link', { name: 'Get directions' }).getAttribute('href')).startsWith('https://www.google.com/maps/search/'));
 const mapFrame = contact.locator('iframe');

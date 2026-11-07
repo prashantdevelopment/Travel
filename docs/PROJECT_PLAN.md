@@ -1,6 +1,6 @@
 # Project Plan — Dhruv Fine Trip
 
-**Status:** Phase B3 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** waiting for review; Phase C (voice) is deferred
+**Status:** Phase B3 done (waiting for review) · **Last updated:** 2026-11-07 · **Next step:** B4.5 – micro interactions, then B4.6 regression; B4.10 waits for the user
 
 > How to use this file: it is the single source of truth for what gets built and in which order.
 > Work happens **one step at a time**: pick the next `todo` → build only that → test (skill `regression-testing`) → cleanup → mark `done` with notes → the user commits.
@@ -191,6 +191,21 @@ Voice booking is deferred, so every Book button needs a working target. A short 
 | B3.1 | `lib/booking.js`: validate the fields and build the WhatsApp message (unit tested) | done | 2026-11-07 | Pickup required, drop required unless a package, date required and not in the past, people 1 to 50; message lists only filled details, package bookings leave out the trip type. 9 unit tests; 3 mutations caught (past date, drop with package, trip type in package message) |
 | B3.2 | `#book` section with the form; Book buttons prefill it; every "by voice" promise replaced | done | 2026-11-07 | `components/BookSection.js` + `components/BookingForm.js` (labels, inline errors with aria, focus on first error, 48px inputs at 16px, success state with "Open WhatsApp again"). Prefill: data-book-* on cars and destinations, `/?package=` from /packages. Hero card now "Book in a minute", calendar icon on the phone Book button, FAQ, steps and 404 copy updated. New suite e2e-booking 29/29 (WhatsApp is recorded, never opened). Screenshot found date and time going out of line on error; fixed and tested |
 | B3.3 | Phase B3 regression | done | 2026-11-07 | build ok · unit 30/30 · e2e-booking 29/29 · e2e-home 103/103 · e2e-packages 22/22 · 0 failing parts |
+
+### Phase B4 — Premium polish (planned 2026-11-07)
+User: a grey shadow around the carousel photo looks wrong, the site does not feel premium or interactive enough, and a reload should land at the top of the page. Rules from `premium-interaction-craft`: transform and opacity only, hover only on pointer devices, one set of timing tokens, reduced motion respected.
+| # | Step | Status | Done on | Notes |
+|---|---|---|---|---|
+| B4.1 | Remove the carousel shadow; reload always starts at the top of the page | done | 2026-11-07 | Shadow removed (it was clipped by the track into a grey box). Inline head script: manual scroll restoration, and on a reload the old #hash is dropped and the page starts at the top; fresh links like /#book still land on the section. New suite e2e-polish 6/6; mutation (no script) caught 3 fails |
+| B4.7 | Facebook page link (user, 2026-11-07) in footer and contact | done | 2026-11-07 | https://www.facebook.com/share/18bo2AcbGZ/ |
+| B4.2 | Header transparent over the hero photo, solid after scrolling | done | 2026-11-07 | Hero slides under the sticky header (`--header-h`), full screen on desktop; white logo and links, yellow Call and tagline over the photo; solid after 24px; phone menu forces the solid header. Initial state set by the head script (no flash), kept in sync by PageEffects. Mutation (menu rule) caught |
+| B4.8 | Gentle smooth scrolling (user, 2026-11-07) and mobile hardening | done | 2026-11-07 | `lenis` 1.3.27 via `components/SmoothScroll.js`: wheel easing on desktop, native touch on phones, off with reduced motion, anchors honour scroll-margin (a double offset was found and fixed; mutation caught). CSS scroll-behavior removed. Fleet chips wrap on phones. No sideways scroll or off-screen element on /, /packages, /credits, 404 at 360, 375 and 390px; equal 64px section spacing on phones |
+| B4.3 | Hero entrance (staggered) and a slow photo zoom | done | 2026-11-07 | CSS only (runs without JS): copy rises 80ms apart, card last, photo settles from 108% over 18s. The new 360/375/390px check caught the zoom causing sideways scroll; fixed with overflow hidden on the photo layer. Reduced motion instant |
+| B4.4 | Moving strip of real routes under the hero | done | 2026-11-07 | `components/RouteStrip.js`: 12 places from `lib/business.js`, seamless CSS loop, pauses on hover, read once by screen readers, still and wrapped with reduced motion (mutation caught). No sideways page scroll |
+| B4.9 | Professional phone numbers (user, 2026-11-07) | done | 2026-11-07 | `formatPhone` shows +91 73102 24488 everywhere; hero button reads "Call now" so it fits half a phone width. Unit 30/30, e2e-home 104/104 |
+| B4.10 | Photo credits (user asked to remove them) | blocked (waiting for the user) | | Most photos are CC BY or CC BY-SA, which require credit. Options: keep a small footer link, swap to CC0/public domain photos, or use the client's own photos |
+| B4.5 | Button and card micro interactions with motion tokens | todo | | |
+| B4.6 | Phase B4 regression | todo | | |
 
 ### Phase C — Voice booking assistant (deferred by the user on 2026-11-07)
 Options discussed: A rule-based (free), B full LLM, C mix (rule-based flow in code plus an LLM only to pull details out of free Hinglish speech, behind an env flag). Recommended C. Decide when this phase starts.

@@ -13,8 +13,8 @@ test('telLink adds the +91 country code', () => {
   assert.equal(telLink('7310224488'), 'tel:+917310224488');
 });
 
-test('formatPhone splits the number for reading', () => {
-  assert.equal(formatPhone('7310224488'), '73102 24488');
+test('formatPhone shows the country code and splits the number for reading', () => {
+  assert.equal(formatPhone('7310224488'), '+91 73102 24488');
 });
 
 test('whatsappLink without text opens the chat', () => {

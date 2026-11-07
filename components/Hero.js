@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { business, bookingMessage, formatPhone, heroPhoto, telLink, whatsappLink } from '@/lib/business';
+import { business, bookingMessage, heroPhoto, telLink, whatsappLink } from '@/lib/business';
 
 export default function Hero() {
   return (
@@ -20,7 +20,7 @@ export default function Hero() {
               Book a ride
             </a>
             <a className="btn btn-light" href={telLink(business.phones[0])}>
-              Call {formatPhone(business.phones[0])}
+              Call now
             </a>
             <a className="btn btn-light" href={whatsappLink(bookingMessage)} target="_blank" rel="noopener noreferrer">
               WhatsApp

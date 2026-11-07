@@ -32,6 +32,7 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --duration: 200ms;
   --max-width: 1120px;
+  --header-h: 65px;
 
   color-scheme: light;
 }
@@ -45,7 +46,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -221,10 +221,6 @@ section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
@@ -272,6 +268,48 @@ section[id] {
   background: rgba(247, 246, 243, 0.92);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
+  transition: background-color 250ms var(--ease), border-color 250ms var(--ease);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-h: 73px;
+  }
+}
+
+/* Home, at the very top: header floats over the hero photo (set by the head script and PageEffects).
+   An open phone menu keeps the solid header so its links stay readable. */
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .logo {
+  color: #fff;
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .logo-tag {
+  color: var(--accent);
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .desktop-nav a {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .desktop-nav a:hover {
+  color: #fff;
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .header-call {
+  background: var(--accent);
+  color: #0f2a44;
+}
+
+html[data-header='over'] .site-header:not(:has(.mobile-nav)) .mobile-menu .btn {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: #fff;
 }
 
 .header-inner {
@@ -403,10 +441,12 @@ section[id] {
 }
 
 /* Hero: full-bleed photo with a dark scrim so white text stays readable */
+/* The hero slides up under the sticky header so the photo fills the first screen. */
 .hero {
   position: relative;
   isolation: isolate;
-  padding-block: var(--space-12) var(--space-16);
+  margin-top: calc(var(--header-h) * -1);
+  padding-block: calc(var(--space-12) + var(--header-h)) var(--space-16);
   color: #fff;
 }
 
@@ -414,6 +454,7 @@ section[id] {
   position: absolute;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
 }
 
 .hero-media img {
@@ -430,7 +471,7 @@ section[id] {
 
 @media (min-width: 960px) {
   .hero {
-    min-height: calc(100dvh - 72px);
+    min-height: 100dvh;
     display: grid;
     align-items: center;
   }
@@ -465,7 +506,7 @@ section[id] {
 
 @media (min-width: 768px) {
   .hero {
-    padding-block: var(--space-24);
+    padding-block: calc(var(--space-24) + var(--header-h)) var(--space-24);
   }
 }
 
@@ -1335,11 +1376,9 @@ section[id] {
 /* Fleet filter chips */
 .chips {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-6);
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 2px;
 }
 
 .chip {
@@ -1425,7 +1464,6 @@ section[id] {
   z-index: 1;
   opacity: 1;
   transform: scale(1);
-  box-shadow: 0 20px 48px rgba(15, 42, 68, 0.28);
 }
 
 .carousel-slide img {
@@ -1662,5 +1700,118 @@ section[id] {
 @media (max-width: 767px) {
   .booking-sent .btn {
     width: 100%;
+  }
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Hero entrance: copy rises in one line at a time, the card last; the photo settles slowly.
+   Pure CSS, so it also runs without JavaScript; reduced motion makes it instant. */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.08);
+  }
+}
+
+.hero-media img {
+  animation: hero-zoom 18s var(--ease) both;
+}
+
+.hero-copy > *,
+.hero-card {
+  animation: hero-in 700ms var(--ease) both;
+}
+
+.hero-copy > :nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.hero-copy > :nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.hero-copy > :nth-child(4) {
+  animation-delay: 240ms;
+}
+
+.hero-card {
+  animation-delay: 360ms;
+}
+
+/* Moving strip of places under the hero */
+.route-strip {
+  overflow: hidden;
+  background: #0f2a44;
+  color: #fff;
+}
+
+.route-strip-track {
+  display: flex;
+  width: max-content;
+  animation: route-strip 45s linear infinite;
+}
+
+.route-strip:hover .route-strip-track {
+  animation-play-state: paused;
+}
+
+@keyframes route-strip {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.route-strip-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-strip-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) 0 var(--space-4) var(--space-6);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.route-strip-list li::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Reduced motion: no movement, every place visible on one wrapped line */
+@media (prefers-reduced-motion: reduce) {
+  .route-strip-track {
+    width: auto;
+    justify-content: center;
+    animation: none;
+  }
+
+  .route-strip-list {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .route-strip-list[aria-hidden] {
+    display: none;
   }
 }
